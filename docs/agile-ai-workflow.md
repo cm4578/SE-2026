@@ -9,7 +9,7 @@
 | 項目 | 內容 |
 |---|---|
 | 題目 | [二手書交易平台](https://claude.ai/artifact/45bP7bdGCfo4SwNeKEkFFC) |
-| Repo | [cm4578/SV-2026](https://github.com/cm4578/SV-2026) |
+| Repo | [cm4578/SE-2026](https://github.com/cm4578/SE-2026) |
 | 看板 | [軟體工程Agile](https://github.com/users/cm4578/projects/1) |
 | 成員 | `cm4578`、`GaoJie0648`，共兩人 |
 | 架構制定完成 | 2026-11-08 |
