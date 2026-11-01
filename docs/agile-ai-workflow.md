@@ -76,7 +76,7 @@ BMAD 的 PM 是 AI 角色，不等於 PO。報告要寫清楚 AI 只負責提案
    - **Story Points**：Number 欄位
    - **Sprint**：Iteration 欄位，在網頁上建立
    - **標籤**：`ai-drafted`、`ambiguous`、`missing`、`ai-invented`
-5. 設定 `main` 分支保護，合併 PR 至少要另一人核准。
+5. 依 [`GITFLOW.md`](GITFLOW.md) 建立 `develop`，並設定 `main` 與 `develop` 的分支保護，合併 PR 至少要另一人核准。
 6. 確認 Project 與 Repo 助教都能開啟，並定期截圖保留。
 
 ## 單一 Story 流程
@@ -142,15 +142,21 @@ bmad-review 用 adversarial 視角檢查 Issue #12，
 ### 6. 執行（Developer）
 
 1. Story 移到 In Progress，並指派負責人。
-2. 開分支，例如 `story/12-order-flow`。
+2. 依 [`GITFLOW.md`](GITFLOW.md) 從 `develop` 開分支，例如 `docs/12-訂單流程循序圖`。
 3. 請 AI 用 Mermaid 或 PlantUML 起草 UML，由人修改。
-4. 由人 commit，例如 `docs: 新增訂單流程循序圖 (#12)`。
+4. 由人 commit，message 遵守 [`COMMIT_CONVENTION.md`](COMMIT_CONVENTION.md)，issue 編號放在 footer：
+
+   ```text
+   docs: 新增訂單流程循序圖
+
+   Refs #12
+   ```
 
 ### 7. 審查 PR（另一人）
 
-開 PR，內文寫 `Refs #12`，Story 移到 In Review。審查者對照 Story 確認後才合併。
+開 PR 到 `develop`，內文寫 `Refs #12`，Story 移到 In Review。審查者對照 Story 確認後，用「Create a merge commit」合併。
 
-**不要寫 `Closes #12`。** 合併時 Issue 會自動關閉，等於跳過 PO 驗收。
+**PR 與 commit 都不要寫 `Closes #12`。** 合併時 Issue 會自動關閉，等於跳過 PO 驗收。
 
 ### 8. 驗收（PO）
 
