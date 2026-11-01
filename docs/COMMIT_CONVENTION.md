@@ -32,7 +32,7 @@
 | 語言 | 繁體中文，台灣用語（規則見第 3 節） |
 | Header 長度 | 顯示寬度上限 72，建議 50 以內 |
 | Body 每行長度 | 顯示寬度上限 72（約 36 個中文字） |
-| Issue 參照格式 | `#123`（GitHub）；使用 Jira 時改為 `PROJ-123` |
+| Issue 參照格式 | 只用 `Refs #123`（GitHub）；使用 Jira 時改為 `Refs PROJ-123`。禁止關閉 issue 的關鍵字（規則見 6.2 節） |
 | 內部需求編號 | 禁止出現在 commit message（規則見 3.5 節） |
 | AI 共同作者標註 | 停用（規則見 6.3 節） |
 
@@ -62,7 +62,7 @@
 - 禁止簡體字，也禁止整句使用英文或其他語言。
 - 以下內容保留英文原樣，不要翻譯：
   - type 與 scope，例如 `feat`、`fix`、`cli`
-  - footer 的 token，例如 `BREAKING CHANGE`、`Closes`、`Refs`、`Co-authored-by`（工具靠這些字解析）
+  - footer 的 token，例如 `BREAKING CHANGE`、`Refs`、`Co-authored-by`（工具靠這些字解析）
   - 程式碼中的名稱：函式、變數、類別、檔案路徑、設定鍵、指令。建議用反引號標出，例如 `` `MoleRunner` ``。
   - 產品、工具與服務名稱，例如 GitHub、Docker、Homebrew、macOS
   - git 自動產生的固定文字，例如 `This reverts commit <hash>.`（見第 11 節）
@@ -110,7 +110,7 @@
 
 - **禁止**在 commit message 中寫需求規格的編號或階段代號，例如 `CLN-01`、`OPT-01～07`、`SYS-03`、`P2`、`phase 2`、「第二階段」。這些編號只在內部文件使用，看 git log 的人不知道它們代表什麼。
 - 改寫成功能描述，例如 `SYS-03: fork 的 sudo -A` 要寫成 `feat(cli): 改用 sudo -A 搭配 App 的密碼視窗`。
-- issue 參照（`Closes #123`）不受此限，放在 footer。
+- issue 參照（`Refs #123`）不受此限，放在 footer。
 
 ## 4. Header
 
@@ -224,13 +224,15 @@
 - 每個 footer 從新的一行開始，格式為 `Token: value` 或 `Token #value`。token 與後面的冒號保留英文半形原樣；說明文字使用繁體中文。
 - 順序固定：
   1. `BREAKING CHANGE:`（見第 7 節）
-  2. Issue 參照（`Closes`、`Refs`）
+  2. Issue 參照（`Refs`）
   3. AI 共同作者標註為「啟用」時，空一行後放 `Co-authored-by:`，這一段必須是整個 message 的最後一段
 
 ### 6.2 Issue 參照
 
-- `Closes #123`：這個 commit 完成並關閉該 issue。
-- `Refs #123`：與該 issue 相關，但不關閉。
+- 只能用 `Refs #123`，表示這個 commit 與該 issue 相關。
+- **禁止**在 issue 編號前面寫會自動關閉 issue 的關鍵字，例如 `Closes #123`、`fixes #123`。GitHub 認得的關鍵字有 `close`、`closes`、`closed`、`fix`、`fixes`、`fixed`、`resolve`、`resolves`、`resolved`，大小寫都算。這條規則只限制 issue 參照，type `fix` 照常使用。
+  - 原因：本專案的 issue 必須由 PO 對照驗收條件驗收後，手動關閉。這些關鍵字會在 commit 進入 `main` 時自動關閉 issue，跳過 PO 驗收。
+  - PR 的標題與內文同樣禁止，規則見 `docs/GITFLOW.md`。
 - 有多個 issue 時，每個 issue 各寫一行。
 - 只能引用使用者或任務描述中明確提供的 issue 編號。**禁止猜測或捏造 issue 編號**；不知道就不要寫。
 
@@ -287,7 +289,7 @@ fix(config): 讓 PORT 環境變數能覆蓋預設埠號
 預設埠號在讀取環境變數之後才套用，
 所以使用者設定的 PORT 一律被蓋掉。
 
-Closes #87
+Refs #87
 EOF
 ```
 
@@ -321,7 +323,7 @@ feat(auth): refresh token 改為每次使用都輪替
 每次使用 refresh token 時，都會發出新的 token，並撤銷舊的。
 外洩的 refresh token 因此最多只能被使用一次。
 
-Closes #142
+Refs #142
 ```
 
 **修正錯誤**
@@ -335,7 +337,7 @@ fix(cart): 防止快速點擊時數量變成負數
 - 請求尚未完成時停用按鈕
 - 伺服器端將數量下限設為 0
 
-Closes #318
+Refs #318
 ```
 
 **破壞性變更**
@@ -348,7 +350,7 @@ feat(api)!: 每個請求都必須帶 API 版本 header
 
 BREAKING CHANGE: 沒有帶 `X-API-Version` header 的請求現在會收到
 400 錯誤。加上 `X-API-Version: 1` 即可維持目前的格式。
-Closes #205
+Refs #205
 ```
 
 **重構**
@@ -391,7 +393,8 @@ refresh token，其中一個分頁換到新的 token 後，其他分頁的
 | `fix: 修正 bug` | 只重複 type，沒說明是什麼問題 | `fix(auth): 拒絕 token 已過期的登入` |
 | `feat: 新增搜尋並修正分頁` | 兩件事混在同一個 commit | 拆成 `feat(search): ...` 與 `fix(paging): ...` 兩個 commit |
 | `feat(api,ui): 新增匯出` | 使用多重 scope | `feat: 新增報表的 CSV 匯出` |
-| `fix(api): 處理 user 為 null 的情況 (#123)` | issue 編號放在 subject | subject 不放編號，在 footer 加上 `Closes #123` |
+| `fix(api): 處理 user 為 null 的情況 (#123)` | issue 編號放在 subject | subject 不放編號，在 footer 加上 `Refs #123` |
+| footer 寫 `Closes #123` | issue 會自動關閉，跳過 PO 驗收 | `Refs #123` |
 | `feat: 依照要求完成修改` | 描述對話，而不是變更內容 | 依實際變更撰寫 |
 
 錯誤的 body 示範：
@@ -420,6 +423,7 @@ auth.ts、login.tsx 和 config.ts，所有測試都通過了。
 - [ ] 需要 body 的變更已說明原因，且每行顯示寬度不超過 72
 - [ ] 破壞性變更已加上 `!` 與 `BREAKING CHANGE:`
 - [ ] issue 編號與其他資訊都有根據，沒有捏造
+- [ ] issue 參照只用 `Refs`，沒有 `Closes`、`Fixes`、`Resolves` 等關鍵字
 - [ ] 沒有第一、第二人稱、對話內容、工作過程描述、工具簽名或 emoji
 - [ ] AI 共同作者標註為「停用」時，沒有 `Co-authored-by: Claude ...`、`Claude-Session: ...` 等 AI 署名
 - [ ] 一個 commit 只包含一個邏輯變更
