@@ -18,6 +18,7 @@
 | 本文件範圍 | 只涵蓋 Agile + AI，不含 Waterfall |
 | BMAD | 不採用，原因見「AI 使用範圍」 |
 | Story 起草與檢查工具 | 待定 |
+| Agile 組是否需交 SRS | 待確認 |
 
 ## 工作流總覽
 
@@ -102,6 +103,9 @@ Story 格式：
 ## 驗收條件
 - [ ] Given ... When ... Then ...
 
+## 需求來源
+- 驗收條件 1：`docs/notes/<檔案>` 的「<段落>」
+
 ## AI 紀錄
 - 工具／模型：
 - 起草者：
@@ -118,6 +122,8 @@ Story 格式：
 ```
 
 把結果貼到 Issue 留言。
+
+接著由人逐條核對「需求來源」。在 `docs/notes/` 找不到來源的需求，加上 `ai-invented`，交給 PO 決定詢問利害關係人或刪除。
 
 ### 4. PO 審查（PO）
 
@@ -159,7 +165,17 @@ Story 格式：
 
 ### 8. 驗收（PO）
 
-PO 逐條核對驗收條件。全部符合就留言接受，手動關閉 Issue，並移到 Done。不符合就退回 In Progress。
+PO 逐條核對驗收條件，並確認符合「完成標準」。全部符合就留言接受，手動關閉 Issue，並移到 Done。不符合就退回 In Progress。
+
+## 完成標準（Done Criteria）
+
+Story 必須符合下列全部條件，才能移到 Done。本節由 PO 在審查本文件的 PR 時確認。
+
+- 驗收條件逐條符合，PO 已留言接受。
+- PR 經作者以外的組員審查，並以「Create a merge commit」合併到 `develop`。
+- AI 的使用已記錄到 `docs/ai-log.md`。
+- AI 起草的 UML 已由人修改。
+- 和 `docs/notes/product-spec.md`「品質要求」有關的 Story，設計或實作符合其中的一致性、安全與個資要求。
 
 ## Sprint 固定節奏
 
@@ -222,7 +238,7 @@ Story 起草與檢查的工具待定。不論使用哪個工具，都依下表�
 
 ## AI 使用紀錄
 
-每次使用 AI，都在 `docs/ai-log.md` 新增一列：
+每次使用 AI，都在 `docs/ai-log.md` 新增一列。完整的 prompt 貼在對應 Issue 或 PR 的留言，「問了什麼」欄寫摘要並附上留言連結：
 
 ```markdown
 | 日期 | 階段 | 工具／模型 | 問了什麼 | AI 產出 | 接受／拒絕及原因 | 核准者 | 時間 |
