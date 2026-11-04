@@ -1,6 +1,6 @@
 # Agile + AI 工作流程
 
-本文件說明本組如何結合 Agile、AI 與 BMAD 完成期中專案。
+本文件說明本組如何結合 Agile 與 AI 完成期中專案。
 
 核心原則：**AI 可以起草，只有人可以接受，每次使用都要記錄。**
 
@@ -16,7 +16,8 @@
 | 繳交截止日 | 待確認 |
 | 繳交程式碼 | 需要 |
 | 本文件範圍 | 只涵蓋 Agile + AI，不含 Waterfall |
-| BMAD | 已確認可以使用 |
+| BMAD | 不採用，原因見「AI 使用範圍」 |
+| Story 起草與檢查工具 | 待定 |
 
 ## 工作流總覽
 
@@ -59,25 +60,19 @@ flowchart TD
 - PR 作者不能審查自己的 PR。
 - 兩人都要了解全部內容，因為任何成員都可能被要求解釋報告或程式碼。
 
-BMAD 的 PM 是 AI 角色，不等於 PO。報告要寫清楚 AI 只負責提案，由真人 PO 接受。
+報告要寫清楚 AI 只負責提案，由真人 PO 接受。
 
 ## 準備工作（Sprint 0）
 
 1. 把題目規格書匯出到 `docs/notes/product-spec.md`，並建立 `docs/ai-log.md`。
-2. 在 Repo 根目錄安裝 BMAD v6.12。需要 Node.js 20.12+、Python 3.10+ 與 uv。
-
-   ```powershell
-   npx bmad-method install
-   ```
-
-3. 確認兩人都有 Project 的寫入權限。
-4. 設定 Project：
+2. 確認兩人都有 Project 的寫入權限。
+3. 設定 Project：
    - **Status**：Backlog → AI Draft → Ready → In Progress → In Review → Done
    - **Story Points**：Number 欄位
    - **Sprint**：Iteration 欄位，在網頁上建立
    - **標籤**：`ai-drafted`、`ambiguous`、`missing`、`ai-invented`
-5. 依 [`GITFLOW.md`](GITFLOW.md) 建立 `develop`，並設定 `main` 與 `develop` 的分支保護，合併 PR 至少要另一人核准。
-6. 確認 Project 與 Repo 助教都能開啟，並定期截圖保留。
+4. 依 [`GITFLOW.md`](GITFLOW.md) 建立 `develop`，並設定 `main` 與 `develop` 的分支保護，合併 PR 至少要另一人核准。
+5. 確認 Project 與 Repo 助教都能開啟，並定期截圖保留。
 
 ## 單一 Story 流程
 
@@ -89,8 +84,10 @@ BMAD 的 PM 是 AI 角色，不等於 PO。報告要寫清楚 AI 只負責提案
 
 ### 2. AI 起草（Developer）
 
+起草工具待定。不論使用哪個工具，prompt 都要包含下列要求：
+
 ```text
-bmad-spec 根據 docs/notes/product-spec.md 起草 User Story，
+根據 docs/notes/product-spec.md 起草 User Story，
 每條附 Given/When/Then 驗收條件。筆記沒提到的需求，
 不要自行補上，改列成待確認問題。
 ```
@@ -113,9 +110,11 @@ Story 格式：
 
 ### 3. 檢查 Story（Developer）
 
+檢查工具待定。不論使用哪個工具，prompt 都要包含下列要求：
+
 ```text
-bmad-review 用 adversarial 視角檢查 Issue #12，
-另外逐項對照 INVEST，找出模糊、遺漏或筆記沒提到的內容。
+用挑錯的角度檢查 Issue #12，逐項對照 INVEST，
+找出模糊、遺漏或筆記沒提到的內容。
 ```
 
 把結果貼到 Issue 留言。
@@ -201,27 +200,25 @@ PO 逐條核對驗收條件。全部符合就留言接受，手動關閉 Issue�
 
 統計 `ai-invented`、`ambiguous`、`missing` 的數量，討論原因並決定改進項目。下一輪把改進項目寫進新的 Sprint 紀錄 Issue。
 
-## BMAD 使用範圍
+## AI 使用範圍
 
-| 階段 | Skill | 用途 | 人工關卡 |
-|---|---|---|---|
-| 發想題目 | `bmad-brainstorming`、`bmad-forge-idea` | 發想與壓力測試 | 全組決定 |
-| 筆記轉 Story | `bmad-spec`、`bmad-create-epics-and-stories` | 起草 Epic 與 Story | PO 接受 |
-| 檢查 Story | `bmad-review`、`bmad-advanced-elicitation` | 找遺漏、做 pre-mortem | PO 決定 |
-| 中途變更 | `bmad-correct-course` | 產出變更提案 | PO 與團隊決定 |
-| 架構決策 | `bmad-architecture` | 記錄架構決策，作為 UML 參考 | 組員審查 PR |
-| 討論需求 | `bmad-party-mode` | 多角色討論 | 僅供參考 |
+Story 起草與檢查的工具待定。不論使用哪個工具，都依下表區分：
 
-### 不採用或需小心
-
-| Skill | 原因 |
+| 可以交給 AI（產出必須由人檢查） | 禁止交給 AI |
 |---|---|
-| `bmad-sprint-planning` | 會產生 sprint status 檔，和看板形成兩份進度 |
-| `bmad-retrospective` | 只用於 Epic 驗收參考，接受 Story 的只能是 PO |
-| `bmad-build-auto`、BMad Loop | 無人值守流程，違反人工接受原則 |
-| `bmad-prd` | PRD 是 Waterfall 組的產出，避免影響方法比較 |
+| 依筆記起草候選 Story 與驗收條件 | 捏造筆記或規格書沒有的使用者、規則或數字 |
+| 列出遺漏的邊界情況、錯誤流程與非功能需求 | 決定範圍與優先順序，例如 MVP 要做什麼 |
+| 用 INVEST 檢查 Story，標出模糊用詞 | 接受 Story，或判定是否通過驗收 |
+| 起草 UML、提供估點建議、摘要 Daily | 沒有人確認就 commit、push，或自動跑完整個流程 |
+| | 接收機密資料或個資 |
 
-估點、Daily 摘要與 UML 由一般 AI 對話處理。BMAD 的 Story 經 PO 接受後，才同步到看板。
+### 不採用 BMAD 的原因
+
+組員在 11/04 討論後決定不使用 BMAD，安裝用的 PR #4 已關閉，留言寫明原因：
+
+1. BMAD 的主流程是 product brief → PRD → 架構 → Epic 與 Story → sprint planning → 實作，必須先寫 PRD。這是先寫完整需求文件、再交給工程師的做法，和 Agile 由 PO 與開發者直接溝通需求不同。
+2. 用來拆 Story 的 `bmad-create-epics-and-stories`，執行前必須先有 PRD 與架構文件。
+3. 部分 skill 違反「AI 起草、人接受」：`bmad-build-auto` 全程不詢問人，最後會自動 commit；`bmad-retrospective` 由 AI 判定驗收結果；`bmad-sprint-planning` 會另外產生進度檔，和看板形成兩份進度。
 
 ## AI 使用紀錄
 
@@ -230,7 +227,7 @@ PO 逐條核對驗收條件。全部符合就留言接受，手動關閉 Issue�
 ```markdown
 | 日期 | 階段 | 工具／模型 | 問了什麼 | AI 產出 | 接受／拒絕及原因 | 核准者 | 時間 |
 |---|---|---|---|---|---|---|---|
-| 11/03 | 筆記轉 Story | bmad-spec / <模型> | 把訪談筆記轉成 Story | 6 條草稿 | 接受 4、修改 1、拒絕 1（付費功能為 AI 自行新增） | <PO 姓名> | 25 分鐘 |
+| 11/03 | 筆記轉 Story | <工具> / <模型> | 把訪談筆記轉成 Story | 6 條草稿 | 接受 4、修改 1、拒絕 1（付費功能為 AI 自行新增） | <PO 姓名> | 25 分鐘 |
 ```
 
 ## 報告對照
