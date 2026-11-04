@@ -162,7 +162,7 @@
 - 選填，**建議**填寫，用來標示受影響的模組或區域。
 - 必須是英文小寫名詞；多個單字用 kebab-case，例如 `user-profile`。禁止使用中文 scope，例如 `feat(登入): ...`。
 - 專案設定有列出 scope 清單時，只能使用清單中的值；清單中沒有合適的值就省略 scope，禁止自行新增。
-- 專案設定沒有列出清單時，先執行 `git log --oneline -30` 參考既有的 scope 並沿用；沒有前例時，以模組或目錄名稱命名。本專案的慣例：`cli` 是 `Vendor/Mole`，App 的模組用 `Features` 底下資料夾名稱的小寫（例如 `purge`、`optimize`），README 用 `readme`。
+- 專案設定沒有列出清單時，先執行 `git log --oneline -30` 參考既有的 scope 並沿用；沒有前例時，以模組或目錄名稱命名。本專案目前的 commit 都沒有使用 scope，例如 `docs: 新增 GitFlow 分支規範`。
 - 同一個邏輯變更橫跨多個模組時，省略 scope。禁止使用多重 scope，例如 `feat(api,ui): ...`。
 
 ### 4.4 subject
