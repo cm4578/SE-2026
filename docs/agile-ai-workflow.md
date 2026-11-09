@@ -11,6 +11,7 @@
 | 題目 | [二手書交易平台](https://claude.ai/artifact/45bP7bdGCfo4SwNeKEkFFC) |
 | Repo | [cm4578/SE-2026](https://github.com/cm4578/SE-2026) |
 | 看板 | [軟體工程Agile](https://github.com/users/cm4578/projects/1) |
+| Wiki | [PO 決定](https://github.com/cm4578/SE-2026/wiki/PO-決定)、[AI 使用紀錄](https://github.com/cm4578/SE-2026/wiki/AI-使用紀錄) |
 | 成員 | `cm4578`、`GaoJie0648`，共兩人 |
 | 架構制定完成 | 2026-11-08 |
 | 繳交截止日 | 待確認 |
@@ -53,7 +54,7 @@ flowchart TD
 | 成員 | 角色 | 職責 |
 |---|---|---|
 | `cm4578` | Product Owner（PO） | 決定優先順序，接受或拒絕 Story，驗收成果，審查對方的 PR |
-| `GaoJie0648` | Scrum Master（SM）＋ Developer | 維護看板、Daily 紀錄與 `docs/ai-log.md`，操作 AI 起草與檢查 Story、拆 Task、畫 UML |
+| `GaoJie0648` | Scrum Master（SM）＋ Developer | 維護看板、會議紀錄與 Wiki 的「AI 使用紀錄」，操作 AI 起草與檢查 Story、拆 Task、畫 UML |
 
 兩人協作時要遵守：
 
@@ -63,9 +64,30 @@ flowchart TD
 
 報告要寫清楚 AI 只負責提案，由真人 PO 接受。
 
+## 紀錄放在哪裡
+
+依內容的性質分成四個地方。同一件事只寫在一個地方，其他地方只放連結。
+
+| 放在哪裡 | 放什麼 | 怎麼更新 |
+|---|---|---|
+| repo 的 `docs/` | 流程與規範、題目規格書、UML | 開 PR，由另一人審查 |
+| [Wiki](https://github.com/cm4578/SE-2026/wiki) | 「PO 決定」與「AI 使用紀錄」 | 直接在網頁上編輯，不用開 PR |
+| Sprint 紀錄 Issue | 所有會議紀錄 | 留言 |
+| 看板 | Story 的進度 | 移動卡片 |
+
+PO 決定與 AI 使用紀錄每天都會增加。放在 repo 要開 PR 才看得到，兩人在不同分支各加一列也會衝突，所以放在 Wiki。Wiki 的每次修改都會留下紀錄，可以在頁面的 History 查到誰在什麼時候改了什麼。
+
+### PO 決定
+
+1. 待確認問題由 PO 決定。AI 可以說明問題、提出選項，或依 PO 的回答整理文字，PO 確認後才存到 Wiki 的「PO 決定」。
+2. 依日期加一個段落，每題用「Q<編號> <標題>」當小標題，例如 `### Q15 買家收件資訊`，Story 才能連到那一題。
+3. 標明決定的來源：PO 自己回答，或是「AI 提議」「AI 解讀」「AI 推薦」後經 PO 採用。
+4. 存檔後，在當期的 Sprint 紀錄 Issue 留言寫題號與 Wiki 連結。Wiki 改了不會通知組員，要靠這則留言通知。
+5. 決定的內容只寫在 Wiki。Story、會議紀錄與其他文件只寫題號與連結。
+
 ## 準備工作（Sprint 0）
 
-1. 把題目規格書匯出到 `docs/notes/product-spec.md`，並建立 `docs/ai-log.md`。
+1. 把題目規格書匯出到 `docs/notes/product-spec.md`，並在 Wiki 建立「PO 決定」與「AI 使用紀錄」兩頁。
 2. 確認兩人都有 Project 的寫入權限。
 3. 設定 Project：
    - **Status**：Backlog → AI Draft → Ready → In Progress → In Review → Done
@@ -81,19 +103,19 @@ flowchart TD
 
 ### 1. 蒐集需求（全組）
 
-以題目規格書為起點，討論後把補充筆記寫進 `docs/notes/`。不要放機密資料或個資。
+以題目規格書為起點，討論後把補充筆記寫進 `docs/notes/`。PO 對待確認問題的決定寫進 Wiki 的「PO 決定」，見「紀錄放在哪裡」。不要放機密資料或個資。
 
 ### 2. AI 起草（Developer）
 
 起草工具待定。不論使用哪個工具，prompt 都要包含下列要求：
 
 ```text
-根據 docs/notes/product-spec.md 起草 User Story，
-每條附 Given/When/Then 驗收條件。筆記沒提到的需求，
+根據 docs/notes/product-spec.md 與 Wiki「PO 決定」起草 User Story，
+每條附 Given/When/Then 驗收條件。兩者都沒提到的需求，
 不要自行補上，改列成待確認問題。
 ```
 
-把輸出建成 Issue，加上 `ai-drafted`，放到 AI Draft 欄，並記錄到 `docs/ai-log.md`。
+把輸出建成 Issue，加上 `ai-drafted`，放到 AI Draft 欄，並記錄到 Wiki 的「AI 使用紀錄」。
 
 Story 格式：
 
@@ -105,6 +127,7 @@ Story 格式：
 
 ## 需求來源
 - 驗收條件 1：`docs/notes/<檔案>` 的「<段落>」
+- 驗收條件 2：Wiki「PO 決定」的 [Q<編號>](<該題的連結>)
 
 ## AI 紀錄
 - 工具／模型：
@@ -123,14 +146,14 @@ Story 格式：
 
 把結果貼到 Issue 留言。
 
-接著由人逐條核對「需求來源」。在 `docs/notes/` 找不到來源的驗收條件，在 Issue 留言列出並加上 `ai-invented`，由 PO 決定向利害關係人確認後補上來源，或從 Story 移除該條（原文保留在留言）；整條 Story 都沒有來源時，才依第 4 步關閉。
+接著由人逐條核對「需求來源」。在 `docs/notes/` 與 Wiki「PO 決定」都找不到來源的驗收條件，在 Issue 留言列出並加上 `ai-invented`，由 PO 決定向利害關係人確認後補上來源，或從 Story 移除該條（原文保留在留言）；整條 Story 都沒有來源時，才依第 4 步關閉。
 
 ### 4. PO 審查（PO）
 
 | 結果 | 動作 |
 |---|---|
 | 接受 | 留言記錄接受內容與修改，移到 Ready |
-| 需求不清 | 加上 `ambiguous` 或 `missing`，修改後再審 |
+| 需求不清 | 加上 `ambiguous` 或 `missing`，PO 的決定寫進 Wiki「PO 決定」，修改後再審 |
 | AI 自行新增 | 加上 `ai-invented`，以 "Close as not planned" 關閉並寫明原因 |
 
 例如規格書已排除線上付款，AI 若提出金流功能，就屬於 `ai-invented`。
@@ -173,7 +196,7 @@ Story 必須符合下列全部條件，才能移到 Done。
 
 - 驗收條件逐條符合，PO 已留言接受。
 - PR 經作者以外的組員審查，並以「Create a merge commit」合併到 `develop`。
-- AI 的使用已記錄到 `docs/ai-log.md`。
+- AI 的使用已記錄到 Wiki 的「AI 使用紀錄」。
 - AI 起草的 UML 已由人修改。
 - 和 `docs/notes/product-spec.md`「品質要求」有關的 Story，設計或實作符合其中的一致性、安全與個資要求。
 
@@ -187,6 +210,14 @@ Story 必須符合下列全部條件，才能移到 Done。
 | 11/3–11/5 | Sprint 1 | 細化 Story 並估點，完成使用案例圖、循序圖、訂單狀態圖 |
 | 11/6–11/8 | Sprint 2 | 完成類別圖與架構決策，包含技術棧、模組切分與資料模型 |
 | 11/9 起 | 實作 Sprint | 依繳交截止日安排 |
+
+### 會議紀錄
+
+每個 Sprint 在 Sprint Planning 時開一張 Sprint 紀錄 Issue（見「單一 Story 流程」第 5 步）：
+
+1. 這個 Sprint 的所有會議，包括 Daily、臨時討論、Sprint Review 與 Retrospective，都在這張 Issue 留言。每則的標題寫日期和會議種類，例如「11/09 Daily」。
+2. 會議中做的決定只寫題號與 Wiki 連結，內容寫在 Wiki 的「PO 決定」。
+3. Sprint 結束時關閉這張 Issue，下一個 Sprint 再開一張新的。
 
 ### Daily（每天或隔幾天）
 
@@ -239,7 +270,7 @@ Story 起草與檢查的工具待定。不論使用哪個工具，都依下表�
 
 ## AI 使用紀錄
 
-每次使用 AI，都在 `docs/ai-log.md` 新增一列。完整的 prompt 貼在對應 Issue 或 PR 的留言，「問了什麼」欄寫摘要並附上留言連結：
+每次使用 AI，都在 Wiki 的[「AI 使用紀錄」](https://github.com/cm4578/SE-2026/wiki/AI-使用紀錄)新增一列，直接在網頁上編輯。完整的 prompt 貼在對應 Issue 或 PR 的留言，「問了什麼」欄寫摘要並附上留言連結：
 
 ```markdown
 | 日期 | 階段 | 工具／模型 | 問了什麼 | AI 產出 | 接受／拒絕及原因 | 核准者 | 時間 |
@@ -251,9 +282,9 @@ Story 起草與檢查的工具待定。不論使用哪個工具，都依下表�
 
 | 作業要求 | 資料來源 |
 |---|---|
-| AI in our process 表 | `docs/ai-log.md` |
-| 審查發現的問題 | `ambiguous`、`missing`、`ai-invented` 標籤的 Issue |
+| AI in our process 表 | Wiki「AI 使用紀錄」 |
+| 審查發現的問題 | `ambiguous`、`missing`、`ai-invented` 標籤的 Issue；Wiki「PO 決定」 |
 | 看板流程展示 | Project 截圖、Issue、PR 連結 |
-| 花費時間 | `docs/ai-log.md` 的時間欄 |
-| 一頁 AI Usage Log | 從 `docs/ai-log.md` 精選，含一筆 AI 出錯的案例 |
+| 花費時間 | Wiki「AI 使用紀錄」的時間欄 |
+| 一頁 AI Usage Log | 從 Wiki「AI 使用紀錄」精選，含一筆 AI 出錯的案例 |
 | 組員分工表 | 角色表與 Issue 負責人 |

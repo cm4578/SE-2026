@@ -59,7 +59,7 @@
 |---|---|---|---|---|
 | `feature` | 新功能或程式碼的改動 | `develop` | `develop` | `feature/8-ISBN帶入書籍資料` |
 | `bugfix` | 修正 `develop` 上已經合併的錯誤 | `develop` | `develop` | `bugfix/31-同一本書重複售出` |
-| `docs` | 只改文件：SRS／PRD、UML、報告、流程文件、AI 使用紀錄 | `develop` | `develop` | `docs/12-訂單流程循序圖` |
+| `docs` | 只改文件：SRS／PRD、UML、報告、流程文件 | `develop` | `develop` | `docs/12-訂單流程循序圖` |
 | `release` | 準備繳交或發布的版本 | `develop` | 先 `main`，再 `develop` | `release/v1.0.0-期中繳交` |
 | `hotfix` | 修正 `main`（已繳交版本）上的錯誤 | `main` | 先 `main`，再 `develop` | `hotfix/40-循序圖錯字` |
 
@@ -182,7 +182,7 @@ check_branch "docs/12-訂單流程循序圖"   # OK
 
 - commit message 必須遵守 `COMMIT_CONVENTION.md`。
 - commit 前，agent 必須先列出 staged 的檔案與完整的 commit message，取得人的同意後才執行 `git commit`。
-- 每次使用 AI 產出內容，都要依團隊流程記錄到 `docs/ai-log.md`。
+- 每次使用 AI 產出內容，都要依團隊流程記錄到 Wiki 的「AI 使用紀錄」。
 
 ### 4.3 同步 develop
 
@@ -223,7 +223,7 @@ Refs #12
 ## AI 使用
 - 工具／模型：<沒有使用 AI 就寫「無」>
 - AI 產出的部分：<哪些內容由 AI 起草，人修改了什麼>
-- 已記錄到 docs/ai-log.md：<是／否>
+- 已記錄到 Wiki「AI 使用紀錄」：<是／否>
 
 ## 審查重點
 - <希望審查者特別確認的地方>
@@ -460,4 +460,4 @@ git push -u origin develop
 - [ ] push 與開 PR 都已經取得人的同意
 - [ ] `--base` 正確：`feature` `bugfix` `docs` 是 `develop`；`release` 與 `hotfix` 先 `main`，再 `develop`
 - [ ] PR 標題符合 commit header 格式，內文有 `Refs #N`，沒有 `Closes`、`Fixes`、`Resolves`
-- [ ] PR 內文寫明 AI 使用情形，AI 產出已經記錄到 `docs/ai-log.md`
+- [ ] PR 內文寫明 AI 使用情形，AI 產出已經記錄到 Wiki 的「AI 使用紀錄」
