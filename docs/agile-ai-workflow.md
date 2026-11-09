@@ -169,7 +169,7 @@ PO 逐條核對驗收條件，並確認符合「完成標準」。全部符合�
 
 ## 完成標準（Done Criteria）
 
-Story 必須符合下列全部條件，才能移到 Done。本節由 PO 在審查本文件的 PR 時確認。
+Story 必須符合下列全部條件，才能移到 Done。
 
 - 驗收條件逐條符合，PO 已留言接受。
 - PR 經作者以外的組員審查，並以「Create a merge commit」合併到 `develop`。
