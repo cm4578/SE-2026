@@ -30,7 +30,7 @@
 3. **不自行新增需求**：筆記或規格書沒提到的需求，列成待確認問題，禁止直接寫進 Story 或文件。規格書已經排除的功能（例如線上付款、真實物流串接、平台收費）禁止提出。
 4. **保留證據**：被拒絕的 Story 與 issue 不要刪除，它們是報告需要的證據。
 5. **不放機密**：禁止把機密資料或個資放進 prompt、程式碼或文件。
-6. **BMAD 只用允許的範圍**：依 `docs/agile-ai-workflow.md` 的「BMAD 使用範圍」。禁止無人值守的流程（`bmad-build-auto`、BMad Loop）。Agile 的工作不使用 `bmad-prd`，因為 PRD 是 Waterfall 的產出。
+6. **AI 只做起草與檢查**：依 `docs/agile-ai-workflow.md` 的「AI 使用範圍」。禁止讓 AI 決定範圍與優先順序、接受 Story 或判定驗收，也禁止無人值守的流程。本組不使用 BMAD，原因見同一節。
 
 ## AI 使用紀錄
 
