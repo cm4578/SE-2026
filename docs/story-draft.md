@@ -1,6 +1,8 @@
 # 二手書交易平台 User Story 草稿
 
-待 PO 審閱。範圍涵蓋基礎規格書的六個必做模組、相關品質要求及本次 PO 確認的補充需求。Story 編號沿用舊稿供對照，並為新增的 Story 接續編號。編號用於文件對照，GitHub Issue 由 SM 建立時編號。
+> **起草紀錄**。本檔保留 Story 起草時的版本。28 條 Story 已建立為 GitHub Issue [#11](https://github.com/cm4578/SE-2026/issues/11) 至 [#38](https://github.com/cm4578/SE-2026/issues/38)。後續的 Story 內容、驗收條件與進度以各 Issue 為準，變更請更新對應的 Issue。
+
+範圍涵蓋基礎規格書的六個必做模組、相關品質要求及 PO 確認的補充需求。Story 編號沿用舊稿供對照，並為新增的 Story 接續編號。
 
 各條驗收條件末尾標示需求來源。規格連結指向[基礎規格書](notes/product-spec.md)的對應段落，題號可直接開啟 [Wiki「PO 決定」](https://github.com/cm4578/SE-2026/wiki/PO-%E6%B1%BA%E5%AE%9A)的對應決定。本次審閱確認的 22 題收錄於 [Story 草稿審閱](https://github.com/cm4578/SE-2026/wiki/PO-%E6%B1%BA%E5%AE%9A#2026-11-09-story-%E8%8D%89%E7%A8%BF%E5%AF%A9%E9%96%B1)。
 
