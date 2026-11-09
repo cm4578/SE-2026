@@ -18,7 +18,7 @@
 | 本文件範圍 | 只涵蓋 Agile + AI，不含 Waterfall |
 | BMAD | 不採用，原因見「AI 使用範圍」 |
 | Story 起草與檢查工具 | 待定 |
-| Agile 組是否需交 SRS | 待確認 |
+| Agile 組是否需交 SRS | 不需要 |
 
 ## 工作流總覽
 
