@@ -1,0 +1,172 @@
+@startuml
+' 統一版 v1.1 2026-11-10
+' Wiki revision: 9771afe81ffb7576da0406a3da56219ffb2e12db
+title SE-2026　二手書交易平台\n整體交易活動圖 · 四泳道設計草案
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName "PingFang TC"
+skinparam defaultFontSize 15
+skinparam shadowing false
+skinparam activityBackgroundColor #F1F6FC
+skinparam activityBorderColor #56708A
+skinparam activityDiamondBackgroundColor #FFF5DE
+skinparam activityDiamondBorderColor #B49B61
+skinparam ArrowColor #516B84
+skinparam swimlaneBorderColor #B8C7D5
+skinparam swimlaneTitleBackgroundColor #EAF2FF
+skinparam noteBackgroundColor #FFF9E8
+skinparam noteBorderColor #D6B875
+
+|買家|
+|賣家|
+|系統|
+|管理員|
+|賣家|
+start
+:填寫書目、書況、價格與照片\n選擇物流及模擬付款方式;
+|系統|
+:驗證發布資格與資料\n符合後建立「上架中」刊登;
+|買家|
+:瀏覽、搜尋與篩選\n選擇可購買刊登;
+:選擇物流與模擬付款方式\n確認本次收件資料並下單;
+|系統|
+:檢查買賣雙方資格與下單資料\n以條件式更新及同一交易建立訂單;
+if (下單成立？) then (否)
+  :顯示失敗原因\n本次未成立訂單;
+  stop
+else (是)
+  :訂單 → 待出貨\n刊登 → 交易中\n保存成交與收件資料;
+endif
+
+:等待出貨、取消或到期事件;
+if (先成立的有效事件為出貨？) then (否)
+  if (事件為下單滿 72 小時仍待出貨？) then (是)
+    :記錄系統取消原因與時間;
+  else (買家或賣家取消)
+    if (取消方是買家？) then (是)
+      |買家|
+      :提交取消與非空白原因;
+    else (賣家)
+      |賣家|
+      :提交取消與非空白原因;
+    endif
+    |系統|
+    :核對當事人、待出貨狀態及原因\n保存取消方、原因及時間;
+  endif
+  |系統|
+  :訂單 → 已取消\n刊登 → 上架中;
+  :重新判斷刊登公開與購買資格\n於訂單詳情提供取消資訊;
+  stop
+else (是)
+  |賣家|
+  :標記自己的待出貨訂單已出貨;
+  |系統|
+  :訂單 → 運送中\n建立「已出貨」物流\n記錄原出貨時間並產生託運單號;
+endif
+
+while (物流尚未到「已取貨」？) is (是)
+  :等待下一次有效物流推進;
+  if (由系統自動推進？) then (是)
+    |系統|
+    :依原出貨時間推進未完成的狀態\n滿 24 小時 → 配送中\n滿 48 小時 → 已取貨;
+  else (管理員操作)
+    |管理員|
+    :操作推進物流一步;
+    |系統|
+    :核對管理權限與物流狀態\n已出貨 → 配送中，或配送中 → 已取貨\n保存管理操作紀錄;
+  endif
+endwhile (已取貨)
+|系統|
+:記錄實際轉成已取貨的時間\n訂單 → 待確認收貨\n起算收貨確認與開案的 72 小時期限;
+note right
+  管理員提前推進不重設原出貨時間。
+  已手動取貨後，保留該次實際取貨時間。
+  刊登於運送、待確認及爭議期間維持「交易中」。
+end note
+
+:等待確認收貨、開案或到期事件;
+if (先成立的有效事件為爭議開案？) then (是)
+  |買家|
+  :提交原因與 1–5 張證據照片\n每張最多 5 MB，JPEG／PNG／WebP;
+  |系統|
+  :核對該筆買家、待確認狀態、期限及照片\n保存單次案件，訂單 → 爭議處理中;
+  note right
+    原收貨期限到達後繼續等待裁決。
+    買家開案後追加送件與再次開案均拒絕。
+  end note
+  |賣家|
+  if (於裁決前選擇回應？) then (是)
+    :提交一次文字回應;
+    |系統|
+    :核對該筆賣家、尚未回應且尚未裁決\n保存回應，訂單維持爭議處理中;
+  else (略過)
+  endif
+  |管理員|
+  :查閱原刊登照片與書況\n買家證據及賣家已有回應;
+  note right
+    賣家回應為可選。
+    管理員依當時已有資料裁決。
+  end note
+  :填寫裁決結果與簡短理由;
+  |系統|
+  :核對管理權限、理由及尚未裁決\n保存裁決與操作紀錄\n並與訂單、刊登的連動一併提交;
+  note right
+    買賣雙方可在自己的訂單詳情
+    查看裁決結果與理由。
+  end note
+  if (判買家有理？) then (是)
+    :訂單 → 已取消\n刊登 → 已下架\n物流維持已取貨;
+    note right
+      賣家取回書後，可依資格自行重新上架。
+      原訂單保留已取消的歷史紀錄。
+    end note
+    stop
+  else (判賣家有理)
+  endif
+else (確認收貨或到期)
+  if (買家於取貨未滿 72 小時確認？) then (是)
+    |買家|
+    :確認收貨;
+    |系統|
+    :核對該筆買家、待確認狀態與期限;
+  else (取貨起滿 72 小時仍待確認)
+    |系統|
+    :觸發到期自動完成;
+  endif
+endif
+
+|系統|
+:訂單 → 訂單完成\n刊登 → 已售出，物流維持已取貨\n記錄完成時間，開放 14 天互評;
+note right
+  完成或取消後，賣家看不到收件資訊。
+  以下兩條互評支線各自獨立，訂單已完成。
+  「略過」表示選擇不評價或期限結束仍未評價。
+end note
+
+fork
+  |買家|
+  if (於完成後 14 天內選擇評價？) then (是)
+    :提交對賣家的 1–5 顆星\n與選填留言;
+    |系統|
+    :核對資格、期限與尚未評過\n保存評價並更新賣家平均星等;
+  else (略過)
+  endif
+fork again
+  |賣家|
+  if (於完成後 14 天內選擇評價？) then (是)
+    :提交對買家的 1–5 顆星\n與選填留言;
+    |系統|
+    :核對資格、期限與尚未評過\n保存評價並更新買家平均星等;
+  else (略過)
+  endif
+end fork
+|系統|
+stop
+
+legend bottom
+  範圍：單筆刊登的一次交易歷程，包含完成後的可選互評。重新上架後的新交易另起一輪。
+  事件分支以通過對應 Story 驗證為前提；不符條件或並行衝突時拒絕該操作，保留當下狀態並繼續等待有效事件。
+  上架狀態仍須搭配帳號、有效刪帳申請與管理員下架限制判斷公開及購買資格。
+  付款僅記錄選定的模擬方式；未出貨取消資訊由訂單頁提供，不另寄 Email 或發站內通知。
+  來源：Stories #15–#27、#28、#32、#33、#35–#38；Wiki Q42–Q47、Q50–Q51、Q55–Q56、Q61–Q62。
+endlegend
+@enduml

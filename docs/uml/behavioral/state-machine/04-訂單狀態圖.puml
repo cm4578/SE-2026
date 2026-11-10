@@ -1,0 +1,77 @@
+@startuml
+' 統一版 v1.1 2026-11-10
+' Wiki revision: 9771afe81ffb7576da0406a3da56219ffb2e12db
+title SE-2026　二手書交易平台\n訂單狀態圖 · 依現行 Story 與 Wiki 起草
+top to bottom direction
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName "PingFang TC"
+skinparam defaultFontSize 15
+skinparam shadowing false
+skinparam stateBorderColor #56708A
+skinparam stateFontColor #17324D
+skinparam ArrowColor #516B84
+skinparam ArrowFontSize 13
+skinparam nodesep 65
+skinparam ranksep 55
+skinparam padding 12
+
+state "待出貨" as Pending #EAF2FF
+Pending : 刊登為「交易中」
+Pending : 物流紀錄尚未建立
+
+state "運送中" as Shipping #EAF2FF
+Shipping : 刊登維持「交易中」
+Shipping : 物流為「已出貨」或「配送中」
+
+state "待確認收貨" as Confirming #FFF5DE
+Confirming : 刊登維持「交易中」
+Confirming : 物流為「已取貨」
+
+state "爭議處理中" as Disputed #F2ECFF
+Disputed : 刊登維持「交易中」
+Disputed : 物流維持「已取貨」
+Disputed : 到原收貨截止時間仍等待裁決
+Disputed : 裁決前可保存賣家的一次文字回應
+
+state "訂單完成" as Completed #E8F5F1
+Completed : 刊登轉為「已售出」
+Completed : 物流維持「已取貨」
+Completed : 記錄完成時間，起算 14 天互評期限
+
+state "已取消" as Cancelled #FDEEF0
+Cancelled : 未出貨取消 → 刊登回「上架中」
+Cancelled : 爭議判買家有理 → 刊登轉「已下架」
+Cancelled : 保存取消／裁決資料與歷史關聯
+
+[*] --> Pending : 下單成功（Story #21）\n[通過交易資格與下單資料檢查]\n/ 保存成交與收件資料，刊登轉「交易中」
+
+Pending --> Shipping : 賣家標記出貨（Story #23）\n/ 建立「已出貨」物流、記錄原出貨時間、產生託運單號
+
+Pending --> Cancelled : 買家或賣家取消（Story #27）\n[已填非空白原因]\n/ 刊登回「上架中」，保存取消方、原因與時間
+
+Pending --> Cancelled : 下單起滿 72 小時（Story #24）\n[仍為待出貨]\n/ 系統取消，刊登回「上架中」，保存原因與時間
+
+Shipping --> Confirming : 物流自動或手動轉為「已取貨」（Story #25、#33）\n/ 記錄實際取貨時間，起算 72 小時收貨確認期限
+
+Confirming --> Completed : 買家確認收貨（Story #26）\n[取貨未滿 72 小時]
+
+Confirming --> Completed : 取貨起滿 72 小時（Story #26）\n[仍為待確認收貨]\n/ 系統自動完成
+
+Confirming --> Disputed : 買家開案（Story #35）\n[取貨未滿 72 小時，原因與 1–5 張照片合規]\n/ 建立爭議案件
+
+Disputed --> Completed : 管理員判賣家有理（Story #36）\n[已填簡短理由]\n/ 保存裁決與操作紀錄
+
+Disputed --> Cancelled : 管理員判買家有理（Story #36）\n[已填簡短理由]\n/ 刊登轉「已下架」，保存裁決與操作紀錄
+
+Completed --> [*]
+Cancelled --> [*]
+
+legend bottom
+  箭頭標示：觸發事件 [成立條件] / 執行動作；狀態框內附上刊登與物流的連動。
+  物流依原出貨時間計算：滿 24 小時轉「配送中」，滿 48 小時轉「已取貨」。
+  管理員每次推進一步，原計時基準保留；已手動取貨時，後續保留該取貨時間。
+  刊登回到「上架中」後，公開與購買仍須符合帳號資格及管理員下架限制。
+  只有圖示的狀態轉換可成立；不符條件的操作維持原狀態。終點表示本筆訂單的狀態流程結束。
+  來源：Stories #21、#23–#27、#33、#35、#36；Wiki Q42–Q47、Q56、Q61–Q62 與狀態轉換表。
+endlegend
+@enduml

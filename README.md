@@ -17,3 +17,7 @@ uv run python manage.py runserver
 - `uv sync` 依 `pyproject.toml` 與 `uv.lock` 建立 `.venv/` 並安裝套件。
 - `migrate` 會在專案根目錄產生本機資料庫 `db.sqlite3`，這個檔案不進 repo。
 - `SECRET_KEY` 優先讀取環境變數 `DJANGO_SECRET_KEY`，沒有設定時使用開發用金鑰，只能在本機開發使用。
+
+## UML 設計圖
+
+[UML 詳細圖索引](docs/uml/README.md)收錄七張完整版，依結構圖與行為圖分類，提供 SVG、PNG 與 PlantUML 原始檔。

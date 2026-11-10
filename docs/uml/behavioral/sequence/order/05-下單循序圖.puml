@@ -1,0 +1,111 @@
+@startuml
+' 統一版 v1.1 2026-11-10
+' Wiki revision: 9771afe81ffb7576da0406a3da56219ffb2e12db
+title SE-2026　二手書交易平台\n下單循序圖 · Story #21 · Django／SQLite 設計草案
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName "PingFang TC"
+skinparam defaultFontSize 15
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+skinparam sequenceArrowColor #516B84
+skinparam sequenceLifeLineBorderColor #94A3B8
+skinparam participantBorderColor #56708A
+skinparam participantBackgroundColor #EAF2FF
+skinparam noteBackgroundColor #FFF5DE
+skinparam noteBorderColor #D6B875
+skinparam maxMessageSize 260
+hide footbox
+autonumber
+
+actor "買家／瀏覽器" as Buyer
+control "Django View／Form\nURLconf 導向" as View
+participant "下單處理\ntrading" as Trading #E8F5F1
+participant "Models／Django ORM\naccounts・catalog・trading" as ORM
+database "SQLite" as DB
+participant "Django Template" as Template #F2ECFF
+
+== 開啟下單表單 ==
+Buyer -> View : 開啟指定刊登的下單頁
+View -> View : 核對登入身分與頁面存取資格
+break 未登入或不具存取資格
+  View --> Buyer : 拒絕讀取個人資料，提示登入或資格原因
+end
+View -> ORM : 以登入帳號讀取自己的預設收件資料\n與指定刊登的交易選項
+ORM -> DB : 查詢資料
+DB --> ORM : 刊登、交易選項、個人檔案
+ORM --> View : 表單所需資料
+View -> Template : 帶入物流／付款選項與已儲存的收件資訊
+Template --> View : 下單表單 HTML
+View --> Buyer : 顯示表單，允許補填或修改
+
+== 送出下單 ==
+Buyer -> View : 提交刊登編號、物流、模擬付款方式、收件資料
+View -> View : 驗證登入、CSRF 與表單格式
+break 驗證失敗
+  View --> Buyer : 顯示錯誤，維持表單供修正
+end
+View -> Trading : 依登入身分建立訂單
+
+group 同一筆資料庫交易 transaction.atomic()
+  Trading -> ORM : 開始資料庫交易
+  ORM -> DB : BEGIN
+  Trading -> ORM : 重新讀取刊登與買賣雙方的最新資料
+  ORM -> DB : 查詢刊登、買家與賣家
+  DB --> ORM : 當前狀態、資格、售價與交易選項
+  ORM --> Trading : 交易檢查所需資料
+  Trading -> Trading : 檢查交易資格、刊登可購買性\n核對所選方式與對應收件資料
+
+  note over Trading, DB
+    買家已驗證 Email，且買賣雙方為不同帳號。
+    雙方未停權、未刪帳且無有效刪帳申請。
+    刊登上架且無管理員下架限制；所選物流與付款為賣家支援項目。
+    成交價取自伺服器端刊登資料；收件姓名、手機、地址／門市依 Story #21 驗證。
+  end note
+
+  alt 資格或資料不符合
+    Trading -> ORM : 結束交易，拒絕下單
+    ORM -> DB : ROLLBACK
+    Trading -> Trading : 設定資格／資料錯誤結果
+  else 檢查通過
+    Trading -> ORM : 單次條件式更新指定刊登\nWHERE id = 目標編號 AND 狀態 = 上架中\nSET 狀態 = 交易中
+    ORM -> DB : 執行帶條件的 UPDATE
+    DB --> ORM : 受影響筆數
+    ORM --> Trading : 更新筆數
+
+    alt 更新筆數為 0
+      Trading -> ORM : 結束交易，拒絕下單
+      ORM -> DB : ROLLBACK
+      Trading -> Trading : 設定刊登目前無法購買的結果
+    else 更新筆數為 1
+      Trading -> ORM : 建立待出貨訂單\n保存買賣雙方、刊登、成交價、下單時間\n與本次物流、付款方式、收件資料快照
+      ORM -> DB : INSERT 訂單
+      DB --> ORM : 訂單編號
+      ORM --> Trading : 新訂單
+      Trading -> ORM : 提交整筆資料庫交易
+      ORM -> DB : COMMIT
+      DB --> ORM : 提交成功
+      ORM --> Trading : 確認已提交
+      Trading -> Trading : 設定下單成功結果
+    end
+  end
+end
+
+note over Trading, DB #FDEEF0
+  任一讀寫或提交發生資料庫例外時，撤回本次整筆交易。
+  在 atomic 區塊外處理例外，並設定下單失敗結果。
+  SQLite 鎖定衝突如需重試，必須重新執行整筆交易與資格檢查。
+  刊登更新與訂單建立一起提交或一起撤回。
+end note
+
+Trading --> View : 已提交的新訂單，或下單失敗結果
+View -> Template : 依結果產生訂單確認或錯誤頁面
+Template --> View : HTML
+View --> Buyer : 顯示處理結果
+
+legend bottom
+  成功結果：訂單「待出貨」、刊登「交易中」；物流紀錄於賣家出貨時建立。
+  付款僅保存所選模擬方式。所有下單入口共用本流程，成功訊息在資料庫提交後送出。
+  本圖提出條件式更新與 transaction.atomic() 的實作設計，待團隊審查與實作驗證。
+  來源：Story #21、Wiki Q41／Q45／Q55／Q56 與「技術棧決策」。
+endlegend
+@enduml
