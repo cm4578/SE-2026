@@ -1,0 +1,114 @@
+@startuml
+' 統一版 v1.1 2026-11-10
+' Wiki revision: 9771afe81ffb7576da0406a3da56219ffb2e12db
+title SE-2026　二手書交易平台\n核心類別圖 · 概念設計草案
+top to bottom direction
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName "PingFang TC"
+skinparam defaultFontSize 15
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam classBorderColor #56708A
+skinparam classFontColor #17324D
+skinparam ArrowColor #64748B
+skinparam ArrowFontSize 13
+skinparam nodesep 40
+skinparam ranksep 45
+hide methods
+hide circle
+
+class "使用者 User" as User #EAF2FF {
+  使用者編號
+  暱稱、Email、密碼雜湊
+  帳號角色［一般使用者／管理員］
+  Email 驗證狀態
+  帳號狀態、有效刪帳申請
+  預設收件資料［選填］
+  /平均星等
+}
+
+class "分類 Category" as Category #E8F5F1 {
+  分類編號
+  分類名稱
+}
+
+class "書目 Book" as Book #E8F5F1 {
+  書目編號、書名
+  ISBN［選填］
+  作者、出版社、版次［選填］
+  封面［選填］
+}
+
+class "刊登 Listing" as Listing #E8F5F1 {
+  刊登編號
+  書況分級與描述、售價
+  實拍照片［1..5 張］
+  支援的物流與模擬付款方式
+  刊登狀態、首次發布時間
+  管理員下架限制與原因
+}
+
+class "訂單 Order" as Order #FFF5DE {
+  訂單編號
+  買家、賣家
+  成交價、下單時間
+  所選物流與模擬付款方式
+  本次收件資料快照
+  訂單狀態
+  取消來源／原因／時間［選填］
+  完成時間［選填］
+}
+
+class "物流 Shipment" as Shipment #FFF5DE {
+  物流編號、託運單號
+  物流方式、物流狀態
+  原出貨時間
+  實際取貨時間［選填］
+}
+
+class "爭議 Dispute" as Dispute #F2ECFF {
+  案件編號、開案時間
+  買家原因、證據照片［1..5 張］
+  賣家文字回應［選填、最多一次］
+  裁決結果與理由［待裁決時為空］
+  裁決者、裁決時間［待裁決時為空］
+}
+
+class "評價 Review" as Review #F2ECFF {
+  評價編號
+  評價者、被評價者
+  星等［1..5］、留言［選填］
+  評價時間
+}
+
+class "管理操作紀錄 AdminLog" as AdminLog #FDEEF0 {
+  紀錄編號、操作時間
+  操作類型、對象類型與編號
+  操作結果
+  前後狀態［適用時］
+}
+
+Category "1" -- "0..*" Book : 書目所屬分類
+Book "1" -- "0..*" Listing : 同一書目的刊登
+User "1" -- "0..*" Listing : 賣家
+Listing "1" -- "0..*" Order : 歷史交易
+User "1" -- "0..*" Order : 買家
+User "1" -- "0..*" Order : 賣家
+Order "1" -- "0..1" Shipment : 出貨後建立
+Order "1" -- "0..1" Dispute : 單次開案
+Order "1" -- "0..2" Review : 雙方各一次
+User "1" -- "0..*" Review : 評價者
+User "1" -- "0..*" Review : 被評價者
+User "1" -- "0..*" AdminLog : 管理員操作者
+
+legend bottom
+  買家與賣家由訂單關聯決定，同一會員可同時扮演兩者。
+  關聯端點的數字表示數量：1 恰好一筆、0..1 至多一筆、0..* 零到多筆。
+  訂單與評價各關聯兩位不同使用者；訂單賣家須等於刊登賣家，評價雙方須為該訂單的買賣雙方。
+  同一刊登可保留多筆歷史訂單，但同時最多一筆進行中的訂單；已售出後不得再成立新訂單。
+  評價限已完成訂單與既定期限，每位當事人對同一訂單最多一筆；平均星等由有效評價計算。
+  刪帳後保留交易與評價的歷史身分關聯，名稱顯示「已刪除的使用者」。
+  裁決者必須具管理權限。照片與取消資訊以概念屬性表示，資料表拆分於實作設計時細化。
+  本圖描述主要資料與關聯；依據 Stories #11–#38、Wiki「PO 決定」與「技術棧決策」。
+endlegend
+@enduml

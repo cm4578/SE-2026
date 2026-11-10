@@ -1,0 +1,55 @@
+@startuml
+' 統一版 v1.1 2026-11-10
+' Wiki revision: 9771afe81ffb7576da0406a3da56219ffb2e12db
+title SE-2026　二手書交易平台\n套件圖
+
+top to bottom direction
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName "PingFang TC"
+skinparam defaultFontSize 16
+skinparam shadowing false
+skinparam roundcorner 6
+skinparam packageStyle folder
+skinparam packageBorderColor #56708A
+skinparam packageFontColor #17324D
+skinparam ArrowColor #516B84
+skinparam ArrowFontColor #475569
+skinparam ArrowFontSize 13
+skinparam nodesep 40
+skinparam ranksep 35
+skinparam padding 12
+skinparam noteBackgroundColor #F8FAFC
+skinparam noteBorderColor #CBD5E1
+
+package "單一 Django 專案" as project #FFFFFF {
+  package "網站呈現 web\nURLconf · Views · Templates · 靜態檔" as web #EAF2FF
+  package "管理後台 backoffice\n管理操作 · 跨模組協調 · 操作紀錄" as backoffice #F2ECFF
+
+  package "業務功能" as domain #F8FAFC {
+    package "售後 aftersales\n爭議開案與回應 · 裁決規則\n互評 · 平均星等 · 公開評價" as aftersales #E8F5F1
+    package "交易與物流 trading\n下單 · 出貨 · 模擬物流\n取消 · 收貨確認 · 訂單狀態" as trading #E8F5F1
+    package "書目與刊登 catalog\n書目 · ISBN · 分類 · 刊登\n照片 · 搜尋篩選 · 公開資格" as catalog #E8F5F1
+    package "帳號 accounts\n註冊 · Email 驗證 · 登入登出\n個人檔案 · 刪帳申請 · 帳號資格" as accounts #E8F5F1
+
+    aftersales .down.> trading : 查閱訂單／請求狀態轉換
+    aftersales .down.> catalog : 讀取刊登書況與照片
+    aftersales ..> accounts : 取得當事人與評價對象
+    trading .right.> catalog : 取得刊登\n協調刊登狀態
+    trading .down.> accounts : 檢查買賣雙方資格
+    catalog .down.> accounts : 檢查賣家資格
+  }
+
+  web .down.> domain : 使用業務模組／組合頁面資料
+  web .right.> backoffice : 管理頁面使用後台操作
+  backoffice .down.> domain : 檢查管理權限／呼叫各模組操作
+}
+
+legend bottom
+  虛線箭頭 A → B 表示 A 使用或依賴 B。
+  指向「業務功能」的箭頭彙整其內部各模組的依賴。
+  各模組的 Model 透過 Django ORM 存取 SQLite。
+  頁面使用 Django templates 與 Tailwind CSS／Flowbite 靜態檔。
+  本圖為邏輯分工提案，實際 Django app 邊界待團隊確認。
+  模組依據：Stories #11–#38、Wiki「PO 決定」與「技術棧決策」。
+endlegend
+@enduml

@@ -1,0 +1,96 @@
+@startuml
+' 統一版 v1.1 2026-11-10
+' Wiki revision: 9771afe81ffb7576da0406a3da56219ffb2e12db
+title SE-2026　二手書交易平台\n使用案例總覽
+left to right direction
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName "PingFang TC"
+skinparam defaultFontSize 15
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam ArrowColor #64748B
+skinparam actorBorderColor #334155
+skinparam actorFontColor #17324D
+skinparam usecaseBorderColor #6B879D
+skinparam usecaseFontColor #17324D
+skinparam rectangleBorderColor #94A3B8
+skinparam nodesep 25
+skinparam ranksep 40
+skinparam padding 10
+
+actor "訪客" as Guest
+actor "會員" as Member
+actor "買家" as Buyer
+actor "賣家" as Seller
+actor "管理員" as Admin
+
+Buyer --|> Member
+Seller --|> Member
+
+rectangle "二手書交易平台" as System {
+  rectangle "公開瀏覽與帳號" #EEF5FF {
+    usecase "瀏覽、搜尋與篩選刊登\n查看公開評價\nStory #18–#20、#38" as Browse #FFFFFF
+    usecase "註冊帳號\nStory #11" as Register #FFFFFF
+    usecase "登入與登出\nStory #12" as Login #FFFFFF
+    usecase "管理自己的帳號與資料\nEmail 驗證／重寄、個人檔案\n刪帳申請／撤回\nStory #11、#13、#14" as Account #FFFFFF
+  }
+
+  rectangle "買賣雙方共同的交易功能" #F0F9F5 {
+    usecase "查閱自己的訂單\nStory #22" as Orders #FFFFFF
+    usecase "取消待出貨訂單\nStory #27" as Cancel #FFFFFF
+    usecase "交易完成後互評\nStory #37" as Review #FFFFFF
+  }
+
+  rectangle "購買與收貨" #FFF8E9 {
+    usecase "購買刊登並下單\nStory #21" as Purchase #FFFFFF
+    usecase "查看物流與確認收貨\nStory #25、#26" as Receive #FFFFFF
+    usecase "提出書況爭議\nStory #35" as OpenDispute #FFFFFF
+  }
+
+  rectangle "刊登與出貨" #EEF8FA {
+    usecase "建立與管理自己的刊登\n書目／ISBN、照片\n交易方式、上下架\nStory #15–#17" as Listings #FFFFFF
+    usecase "標記出貨\nStory #23" as Ship #FFFFFF
+    usecase "回應書況爭議\nStory #35" as Respond #FFFFFF
+  }
+
+  rectangle "管理後台（存取權限依 #28）" #F5F0FF {
+    usecase "管理使用者\n搜尋、停權／解除、處理刪帳\nStory #29" as ManageUsers #FFFFFF
+    usecase "查閱與管理刊登\n下架／解除下架限制\nStory #30" as ManageListings #FFFFFF
+    usecase "查看訂單與推進模擬物流\nStory #31、#33" as ManageOrders #FFFFFF
+    usecase "裁決書況爭議\nStory #36" as Resolve #FFFFFF
+    usecase "更名既有書籍分類\nStory #34" as Categories #FFFFFF
+    usecase "查閱後台操作紀錄\nStory #32" as Audit #FFFFFF
+  }
+}
+
+Guest -- Browse
+Guest -- Register
+Member -- Browse
+Member -- Login
+Member -- Account
+Member -- Orders
+Member -- Cancel
+Member -- Review
+Buyer -- Purchase
+Buyer -- Receive
+Buyer -- OpenDispute
+Seller -- Listings
+Seller -- Ship
+Seller -- Respond
+Login -- Admin
+ManageUsers -- Admin
+ManageListings -- Admin
+ManageOrders -- Admin
+Resolve -- Admin
+Categories -- Admin
+Audit -- Admin
+
+
+legend bottom
+  實線連接角色與使用案例；空心三角形指向一般角色，買家與賣家繼承會員的共同功能。
+  同一位會員可同時扮演買家與賣家。功能須符合驗證、權限、交易身分與狀態等既有條件。
+  本圖將相關 Story 合併為概覽使用案例，矩形依功能分組。
+  系統內部規則：逾期取消（#24）、自動物流推進（#25）、逾期完成（#26）、管理操作留存（#32）。
+  依據：Stories #11–#38 與 Wiki「PO 決定」現行規則。
+endlegend
+@enduml

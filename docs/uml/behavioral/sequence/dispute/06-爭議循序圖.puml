@@ -1,0 +1,148 @@
+@startuml
+' 統一版 v1.1 2026-11-10
+' Wiki revision: 9771afe81ffb7576da0406a3da56219ffb2e12db
+title SE-2026　二手書交易平台\n爭議處理循序圖 · Stories #35、#36 · 設計草案
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName "PingFang TC"
+skinparam defaultFontSize 15
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+skinparam sequenceArrowColor #516B84
+skinparam sequenceLifeLineBorderColor #94A3B8
+skinparam participantBorderColor #56708A
+skinparam participantBackgroundColor #EAF2FF
+skinparam noteBackgroundColor #FFF5DE
+skinparam noteBorderColor #D6B875
+skinparam maxMessageSize 260
+hide footbox
+autonumber
+
+actor "買家" as Buyer
+actor "賣家" as Seller
+actor "管理員" as Admin
+boundary "Django 介面\nView／Template／backoffice" as Web
+control "售後處理\naftersales" as After #F2ECFF
+control "交易處理\ntrading" as Trade #E8F5F1
+database "資料存取\nModels／ORM／SQLite" as Data
+
+== 一、買家開案 ==
+Buyer -> Web : 提交訂單編號、原因與 1–5 張照片
+Web -> After : 以登入身分提出爭議
+After -> After : 驗證原因及照片\n每張最多 5 MB，JPEG／PNG／WebP
+group 開案的資料庫交易
+  After -> Trade : 核對訂單買家、狀態與實際取貨時間
+  Trade -> Data : 讀取訂單與物流取貨時間
+  Data --> Trade : 訂單與物流資料
+  Trade --> After : 資格與期限檢查結果
+  After -> Data : 檢查此訂單是否已有爭議案件
+  Data --> After : 既有案件查詢結果
+  alt 非該筆買家、非待確認收貨、取貨已滿 72 小時、已有案件或資料不合規
+    After --> Web : 拒絕開案，保留原有資料與狀態
+    Web --> Buyer : 顯示拒絕原因
+  else 符合條件
+    After -> Trade : 請求轉為「爭議處理中」\n寫入時仍須符合原狀態、當事人與期限條件
+    Trade -> Data : 條件式更新訂單狀態
+    Data --> Trade : 更新結果
+    Trade --> After : 條件式更新結果
+    alt 更新失敗或並行衝突
+      After -> Data : 撤回本次交易
+      After --> Web : 開案失敗，狀態與案件均不變
+      Web --> Buyer : 顯示失敗原因，結束本次請求
+    else 更新成功
+    After -> Data : 保存單次爭議案件、原因與已驗證照片的關聯\n提交本次交易
+    Data --> After : 提交成功
+    After --> Web : 開案成功
+    Web --> Buyer : 顯示「爭議處理中」
+    end
+  end
+end
+
+note over After, Data
+  開案後，刊登維持「交易中」，物流維持「已取貨」。
+  到原取貨後 72 小時截止時間時，爭議中的訂單繼續等待裁決。
+  買家後續再次開案或追加送件均拒絕，保留原有內容。
+end note
+
+== 二、賣家可於裁決前回應一次 ==
+opt 該筆訂單賣家選擇回應
+  Seller -> Web : 提交一次文字回應
+  Web -> After : 以登入身分送出回應
+  After -> Data : 在同一交易中核對並條件式保存\n該筆賣家、爭議處理中、尚未裁決、尚未回應
+  alt 條件符合且寫入成功
+    Data --> After : 回應已保存並提交
+    After --> Web : 回應成功
+    Web --> Seller : 顯示已提交的一次回應
+  else 身分不符、已回應、已裁決或並行操作衝突
+    Data --> After : 保留原內容與狀態
+    After --> Web : 拒絕回應
+    Web --> Seller : 顯示拒絕原因
+  end
+end
+
+note over Seller, After
+  72 小時是買家開案期限；賣家回應以「裁決前」為限。
+  管理員依當時已有資料裁決，賣家回應為可選。
+end note
+
+== 三、管理員查閱與裁決 ==
+Admin -> Web : 開啟待處理爭議
+Web -> Web : 檢查管理權限（Story #28）
+break 無管理權限
+  Web --> Admin : 拒絕存取
+end
+Web -> After : 查閱案件資料
+After -> Data : 取得原刊登照片與書況、買家原因與證據\n以及賣家已提交的回應（若有）
+Data --> After : 裁決參考資料
+After --> Web : 案件資料
+Web --> Admin : 顯示案件與原刊登資料
+Admin -> Web : 提交裁決結果與簡短理由
+Web -> Web : 再次驗證管理權限
+break 無管理權限
+  Web --> Admin : 拒絕操作
+end
+Web -> After : 檢查理由與案件是否仍可裁決
+After -> Data : 重新讀取訂單與案件
+Data --> After : 當前訂單狀態與裁決狀態
+alt 權限不符、理由未填、訂單非爭議處理中或案件已裁決
+  After --> Web : 拒絕裁決，保留原有內容與狀態
+  Web --> Admin : 顯示拒絕原因
+else 符合裁決條件
+  group backoffice 協調同一筆資料庫交易
+    Web -> After : 執行裁決，寫入時再次檢查當前條件
+    After -> Data : 條件式保存裁決結果、理由與裁決者\n僅接受尚未裁決且仍在爭議中的案件
+    Data --> After : 條件式保存結果
+    alt 更新失敗或並行衝突
+      After -> Data : 撤回本次交易
+      After --> Web : 裁決失敗，裁決與訂單刊登均不變
+      Web --> Admin : 顯示失敗原因，結束本次請求
+    else 保存成功
+    alt 判賣家有理
+      After -> Trade : 完成訂單
+      Trade -> Data : 訂單 → 訂單完成，記錄完成時間\n刊登 → 已售出
+    else 判買家有理
+      After -> Trade : 取消訂單
+      Trade -> Data : 訂單 → 已取消\n刊登 → 已下架
+    end
+    Data --> Trade : 狀態更新成功
+    Trade --> After : 連動處理完成
+    After --> Web : 裁決與連動已寫入，等待整筆提交
+    Web -> Data : 留存管理操作紀錄並提交交易\n操作者、時間、類型、對象、結果及前後狀態
+    Data --> Web : 提交成功
+    Web --> Admin : 顯示裁決成功
+    end
+  end
+end
+
+note over Web, Data
+  買賣雙方各自在自己的訂單詳情查看結果與理由，每次查閱均驗證當事人身分。
+  其他一般使用者拒絕查閱；管理員依後台權限處理。
+  裁決後物流維持「已取貨」。訂單完成或取消後，賣家看不到收件資訊。
+end note
+
+legend bottom
+  三段代表不同時間的請求；賣家的一次回應以 opt 表示可選。
+  拒絕或衝突分支立即結束該次操作。各交易任一步驟失敗均撤回；成功回覆在提交後送出。
+  本圖將介面與資料存取細節合併呈現；交易邊界與條件式更新為設計提案，待實作驗證。
+  來源：Stories #22、#26、#28、#32、#35、#36；Wiki Q42、Q46、Q47 與狀態轉換表。
+endlegend
+@enduml
