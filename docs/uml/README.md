@@ -40,7 +40,30 @@ docs/uml/
 - **PlantUML（`.puml`）**：圖的原始檔；修改後須同步重新匯出同名 SVG、PNG，避免三種格式內容不一致。
 - 完整版循序圖與活動圖較長，排入書面時可分段呈現，避免縮成一頁導致文字難以閱讀。
 - 此處保留完整版；簡報精簡版未納入本目錄。
-- 匯出時使用支援繁體中文的字型；原始檔目前指定 `PingFang TC`，其他環境可改用當地可用的繁體中文字型。
+
+## 匯出環境
+
+現有七張圖在 macOS 上以 PlantUML 1.2026.9 匯出，字型為 `PingFang TC`；版本記錄在各 SVG 開頭的 `<?plantuml 1.2026.9?>`。新增或重新匯出時使用同一版 PlantUML（[v1.2026.9 下載頁](https://github.com/plantuml/plantuml/releases/tag/v1.2026.9)）。
+
+- 需要 Java。套件圖、使用案例圖、核心類別圖與訂單狀態圖另需 Graphviz，可用 `java -jar plantuml.jar -testdot` 檢查；循序圖與活動圖不需要。
+- 在 repo 根目錄執行下列指令，SVG、PNG 會以相同檔名輸出到 `.puml` 所在的資料夾：
+
+```bash
+java -jar plantuml.jar -charset UTF-8 -tsvg docs/uml/behavioral/sequence/order/05-下單循序圖.puml
+java -jar plantuml.jar -charset UTF-8 -tpng docs/uml/behavioral/sequence/order/05-下單循序圖.puml
+```
+
+### 字型
+
+`skinparam defaultFontName` 要寫匯出那台電腦上已安裝的繁體中文字型。PlantUML 依這個字型計算文字寬度與方框大小；指定的字型不存在時會改用其他字型，排版可能和預期不同，文字也可能超出方框。
+
+| 匯出系統 | `defaultFontName` |
+|---|---|
+| macOS | `PingFang TC`（現有七張） |
+| Windows | `Microsoft JhengHei`（微軟正黑體） |
+| Linux | `Noto Sans CJK TC` |
+
+在 macOS 以外的系統新增或重新匯出圖時，將 `defaultFontName` 改成上表對應的字型，並在 PR 註明匯出系統。
 
 ## 設計依據與審查
 
