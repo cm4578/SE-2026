@@ -58,3 +58,4 @@
 | `docs/agile-ai-workflow.md` | Agile + AI 工作流程 |
 | `docs/notes/` | 需求筆記與題目規格書 |
 | [Wiki](https://github.com/cm4578/SE-2026/wiki) | PO 決定、AI 使用紀錄（不在 repo 的檔案裡） |
+| [技術棧決策](https://github.com/cm4578/SE-2026/wiki/技術棧決策) | Python Django 全端的選型與原因（Wiki） |

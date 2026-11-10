@@ -20,6 +20,7 @@
 | BMAD | 不採用，原因見「AI 使用範圍」 |
 | Story 起草與檢查工具 | 待定 |
 | Agile 組是否需交 SRS | 不需要 |
+| 技術棧 | Python Django 全端，見 Wiki 的[技術棧決策](https://github.com/cm4578/SE-2026/wiki/技術棧決策) |
 
 ## 工作流總覽
 
@@ -71,7 +72,7 @@ flowchart TD
 | 放在哪裡 | 放什麼 | 怎麼更新 |
 |---|---|---|
 | repo 的 `docs/` | 流程與規範、題目規格書、UML | 開 PR，由另一人審查 |
-| [Wiki](https://github.com/cm4578/SE-2026/wiki) | 「PO 決定」與「AI 使用紀錄」 | 直接在網頁上編輯，不用開 PR |
+| [Wiki](https://github.com/cm4578/SE-2026/wiki) | 「PO 決定」、「AI 使用紀錄」與「技術棧決策」 | 直接在網頁上編輯，不用開 PR |
 | Sprint 紀錄 Issue | 所有會議紀錄 | 留言 |
 | 看板 | Story 的進度 | 移動卡片 |
 
