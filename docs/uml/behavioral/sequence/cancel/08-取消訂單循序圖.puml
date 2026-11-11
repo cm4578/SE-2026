@@ -1,0 +1,95 @@
+@startuml
+' 2026-11-11
+' Wiki revision: cea9aefdf247603043b2e9a96ca2fe4e574c8724
+' 匯出系統：Windows 11，字型 Microsoft JhengHei
+title SE-2026　二手書交易平台\n取消訂單循序圖 · Story #27 · Django／SQLite 設計草案
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName "Microsoft JhengHei"
+skinparam defaultFontSize 15
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+skinparam sequenceArrowColor #516B84
+skinparam sequenceLifeLineBorderColor #94A3B8
+skinparam participantBorderColor #56708A
+skinparam participantBackgroundColor #EAF2FF
+skinparam noteBackgroundColor #FFF5DE
+skinparam noteBorderColor #D6B875
+skinparam maxMessageSize 260
+hide footbox
+autonumber
+
+actor "買家或賣家／瀏覽器" as User
+control "Django View／Form\nURLconf 導向" as View
+participant "取消處理\ntrading" as Trading #E8F5F1
+participant "Models／Django ORM\ncatalog・trading" as ORM
+database "SQLite" as DB
+participant "Django Template" as Template #F2ECFF
+
+== 送出取消 ==
+User -> View : 在訂單詳情提交取消\n訂單編號、取消原因
+View -> View : 驗證登入與取消原因\n去除前後空白後確認原因非空白
+break 未登入，或原因空白／全為空白
+  View --> User : 顯示錯誤，不取消，維持原訂單狀態
+end
+View -> Trading : 依登入身分取消訂單
+
+group 同一筆資料庫交易 transaction.atomic()
+  Trading -> ORM : 開始資料庫交易
+  ORM -> DB : BEGIN
+  Trading -> ORM : 重新讀取訂單最新資料
+  ORM -> DB : 查詢訂單
+  DB --> ORM : 訂單狀態、買家、賣家、刊登
+  ORM --> Trading : 取消檢查所需資料
+  Trading -> Trading : 核對登入者為該筆訂單的買家或賣家\n且訂單為「待出貨」
+
+  alt 不是該筆訂單的當事人，或訂單已離開「待出貨」
+    Trading -> ORM : 結束交易，拒絕取消
+    ORM -> DB : ROLLBACK
+    Trading -> Trading : 設定拒絕取消結果，訂單維持原狀
+  else 檢查通過
+    Trading -> ORM : 單次條件式更新指定訂單\nWHERE id = 訂單編號\nAND 狀態 = 待出貨\nSET 狀態 = 已取消\n保存取消方、原因、取消時間
+    ORM -> DB : 執行帶條件的 UPDATE
+    DB --> ORM : 受影響筆數
+    ORM --> Trading : 更新筆數
+
+    alt 更新筆數為 0（出貨或系統取消已先完成）
+      Trading -> ORM : 結束交易，拒絕取消
+      ORM -> DB : ROLLBACK
+      Trading -> Trading : 設定訂單狀態已改變的結果\n訂單維持先完成操作後的狀態
+    else 更新筆數為 1
+      Trading -> ORM : 刊登「交易中」→「上架中」
+      ORM -> DB : UPDATE 刊登狀態
+      note right of Trading
+        實際公開與購買資格依 Q40、Q44、Q45、Q56 判斷：
+        停權、有效的刪除申請、管理員下架限制仍然適用。
+      end note
+      Trading -> ORM : 提交整筆資料庫交易
+      ORM -> DB : COMMIT
+      DB --> ORM : 提交成功
+      ORM --> Trading : 確認已提交
+      Trading -> Trading : 設定取消成功結果
+    end
+  end
+end
+
+note over Trading, DB #FDEEF0
+  任一讀寫或提交發生資料庫例外（含 SQLite 鎖定錯誤 SQLITE_BUSY／SQLITE_BUSY_SNAPSHOT）時，
+  transaction.atomic() 撤回本次整筆交易，訂單與刊登均不變；訂單取消與刊登回到上架中一起提交或一起撤回。
+  取消處理在 atomic 區塊外處理例外，設定取消失敗結果並回傳錯誤頁面；只撤回本次交易，不覆寫其他操作已完成的結果。
+  若實作選擇重試，須重新執行整筆交易與狀態／當事人檢查，不能只重試 UPDATE；本次不含自動重試。
+end note
+
+Trading --> View : 取消成功，或拒絕取消／取消失敗結果
+View -> Template : 依結果產生訂單詳情或錯誤頁面
+Template --> View : HTML
+View --> User : 顯示處理結果
+
+legend bottom
+  成功結果：訂單「已取消」、刊登「上架中」，保存取消方（買家或賣家）、原因與時間。不另寄 Email 或發站內通知。
+  後到的操作：賣家標記出貨（#23）或下單滿 72 小時系統取消（#24）先完成時，本次取消失敗：
+  可能是條件式更新筆數為 0，也可能直接遇到 SQLite 鎖定錯誤（依例外註解處理）。兩者本身的流程不在本圖。
+  取消資訊在雙方的訂單清單與詳情顯示（#22），本圖不畫顯示流程。
+  本圖提出條件式更新與 transaction.atomic() 的實作設計，待團隊審查與實作驗證。
+  來源：Story #27、#46；Wiki Q20、Q22、Q40、Q44、Q45、Q56、Q62 與狀態轉換表。
+endlegend
+@enduml
