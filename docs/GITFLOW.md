@@ -18,7 +18,7 @@
 4. 描述 2 到 15 個字，只能有中文、英文字母與數字，不加空格、標點或任何分隔符號。
 5. `feature` `bugfix` `docs` 從 `develop` 開出，合併回 `develop`。`release` 從 `develop` 開出、`hotfix` 從 `main` 開出，兩者都是先合併到 `main`，再合併回 `develop`。
 6. 所有合併都透過 PR，由作者以外的組員核准，並使用「Create a merge commit」。
-7. PR 與 commit 只寫 `Refs #N`，禁止寫 `Closes`、`Fixes`、`Resolves`。issue 由 PO 驗收後手動關閉。
+7. PR 與 commit 只寫 `Refs #N`，禁止寫 `Closes`、`Fixes`、`Resolves`。issue 由 PO 驗收後移到 Done，看板會自動關閉 issue。
 8. agent 可以自行建立本機分支；commit、push、開 PR 與打 tag 之前必須取得人的同意；禁止合併 PR、核准 PR 與 force push。
 
 ## 1. 專案設定
@@ -35,9 +35,9 @@
 | issue 編號 | `feature` `bugfix` `hotfix` 必填；`docs` 有對應 issue 時必填 |
 | 合併方式 | 只用「Create a merge commit」，不用 squash 與 rebase merge |
 | PR 核准 | 至少 1 位作者以外的組員 |
-| issue 參照 | 只用 `Refs #N`，issue 由 PO 手動關閉 |
+| issue 參照 | 只用 `Refs #N`，並在 PR 的 Development 手動連結 issue；issue 由 PO 驗收後移到 Done 關閉 |
 | 版本號與 tag | `vMAJOR.MINOR.PATCH`，例如 `v1.0.0`（見第 7 節） |
-| 看板 | [軟體工程Agile](https://github.com/users/cm4578/projects/1) |
+| 看板 | [Agile+AI Final](https://github.com/users/cm4578/projects/2)。期中的舊看板已改名為「軟體工程Agile Midterm」並關閉 |
 
 本文件生效前已經存在的分支（例如 `docs/agile-workflow`）維持原名，禁止為了改名而重建或改寫。
 
@@ -157,7 +157,7 @@ check_branch "docs/12-訂單流程循序圖"   # OK
 
    有未 commit 的變更時，先問人怎麼處理。禁止自行 `stash`、`reset` 或丟棄變更。
 
-2. 確認 issue 存在、沒有關閉，而且已經由 PO 接受（看板狀態為 Ready 或 In Progress）：
+2. 確認 issue 存在、沒有關閉，而且已經由 PO 接受（看板狀態為 Ready 或 In progress）：
 
    ```bash
    gh issue view 12 --json number,title,state,labels,projectItems
@@ -234,14 +234,14 @@ EOF
 - PR 標題遵守 `COMMIT_CONVENTION.md` 的 header 格式，不放 issue 編號。
 - PR 內文必須包含 `Refs #<issue 編號>`，每個 issue 一行。
 - **禁止**在 PR 標題、PR 內文與 commit message 中使用 `Closes`、`Fixes`、`Resolves` 等關閉關鍵字。這些字會讓 issue 自動關閉，跳過 PO 驗收；寫在 commit message 裡的，還會在 release 合併到 `main` 時一次關閉所有相關 issue。commit message 的規則見 `COMMIT_CONVENTION.md` 6.2 節。
-- 開完 PR 後，回報 PR 連結，並提醒人把 Story 移到 In Review。
+- 開完 PR 後，回報 PR 連結，並提醒人在 PR 右側的 Development 連結 issue，看板會自動移到 In review。
 
 ### 4.5 審查與合併（由人執行）
 
 1. 作者以外的組員對照 issue 的驗收條件審查。禁止核准自己的 PR。
 2. 核准後，在 GitHub 選「Create a merge commit」合併。
 3. 合併後，在 PR 頁面按「Delete branch」刪除遠端分支。
-4. PO 逐條核對驗收條件，全部符合就手動關閉 issue，並移到 Done。
+4. PO 逐條核對驗收條件，全部符合就留言接受，再移到 Done，issue 會自動關閉。
 
 agent 禁止合併 PR、核准 PR，也禁止關閉 issue。
 
