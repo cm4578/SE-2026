@@ -1,6 +1,6 @@
 # Agile + AI 工作流程
 
-本文件說明本組如何結合 Agile 與 AI 完成期中專案。
+本文件說明本組如何結合 Agile 與 AI 完成軟體工程專案，期中與期末都適用。
 
 核心原則：**AI 可以起草，只有人可以接受，每次使用都要記錄。**
 
@@ -14,11 +14,11 @@
 | Wiki | [PO 決定](https://github.com/cm4578/SE-2026/wiki/PO-決定)、[AI 使用紀錄](https://github.com/cm4578/SE-2026/wiki/AI-使用紀錄) |
 | 成員 | `cm4578`、`GaoJie0648`，共兩人 |
 | 架構制定完成 | 2026-11-08 |
-| 繳交截止日 | 待確認 |
+| 期末繳交截止日 | 待確認 |
 | 繳交程式碼 | 需要 |
 | 本文件範圍 | 只涵蓋 Agile + AI，不含 Waterfall |
 | BMAD | 不採用，原因見「AI 使用範圍」 |
-| Story 起草與檢查工具 | 待定 |
+| Story 起草與檢查工具 | Claude Opus 5.5、GPT Astra 6.2／Sol 6.2 |
 | Agile 組是否需交 SRS | 不需要 |
 | 技術棧 | Python Django 全端，見 Wiki 的[技術棧決策](https://github.com/cm4578/SE-2026/wiki/技術棧決策) |
 
@@ -157,7 +157,7 @@ PO 決定與 AI 使用紀錄每天都會增加。放在 repo 要開 PR 才看得
 
 ### 2. AI 起草（Developer）
 
-起草工具待定。不論使用哪個工具，prompt 都要包含下列要求：
+起草工具是 Claude Opus 5.5、GPT Astra 6.2／Sol 6.2。不論使用哪個工具，prompt 都要包含下列要求：
 
 ```text
 根據 docs/notes/product-spec.md 與 Wiki「PO 決定」起草 User Story，
@@ -187,7 +187,7 @@ Story 格式：
 
 ### 3. 檢查 Story（Developer）
 
-檢查工具待定。不論使用哪個工具，prompt 都要包含下列要求：
+檢查工具是 Claude Opus 5.5、GPT Astra 6.2／Sol 6.2。不論使用哪個工具，prompt 都要包含下列要求：
 
 ```text
 用挑錯的角度檢查 Issue #12，逐項對照 INVEST，
@@ -221,7 +221,7 @@ Story 格式：
 
 1. 負責人把 Story 移到 In progress。
 2. 依 [`GITFLOW.md`](GITFLOW.md) 從 `develop` 開分支，例如 `docs/12-訂單流程循序圖`。
-3. 請 AI 用 Mermaid 或 PlantUML 起草 UML，由人修改。
+3. 請 AI 起草 UML 或程式，由人修改。UML 用 Mermaid 或 PlantUML。
 4. 由人 commit，message 遵守 [`COMMIT_CONVENTION.md`](COMMIT_CONVENTION.md)，issue 編號放在 footer：
 
    ```text
@@ -247,8 +247,10 @@ Story 必須符合下列全部條件，才能移到 Done。
 - 驗收條件逐條符合，PO 已留言接受。
 - PR 經作者以外的組員審查，並以「Create a merge commit」合併到 `develop`。
 - AI 的使用已記錄到 Wiki 的「AI 使用紀錄」。
-- AI 起草的 UML 已由人修改。
+- AI 起草的 UML 或程式已由人修改。
 - 和 `docs/notes/product-spec.md`「品質要求」有關的 Story，設計或實作符合其中的一致性、安全與個資要求。
+- 實作類 Story：依 `README.md` 的「本機啟動」步驟，在本機跑得起來。
+- 實作類 Story：測試全部通過。
 
 ## Sprint 固定節奏
 
@@ -302,14 +304,14 @@ Story 必須符合下列全部條件，才能移到 Done。
 
 ## AI 使用範圍
 
-Story 起草與檢查的工具待定。不論使用哪個工具，都依下表區分：
+Story 起草與檢查的工具是 Claude Opus 5.5、GPT Astra 6.2／Sol 6.2。不論使用哪個工具，都依下表區分：
 
 | 可以交給 AI（產出必須由人檢查） | 禁止交給 AI |
 |---|---|
 | 依筆記起草候選 Story 與驗收條件 | 捏造筆記或規格書沒有的使用者、規則或數字 |
 | 列出遺漏的邊界情況、錯誤流程與非功能需求 | 決定範圍與優先順序，例如 MVP 要做什麼 |
 | 用 INVEST 檢查 Story，標出模糊用詞，拆分過大的 Story | 接受 Story，或判定是否通過驗收 |
-| 起草 UML、建議拆分 Task、提供估點建議、摘要 Daily | 沒有人確認就 commit、push，或自動跑完整個流程 |
+| 起草 UML 或程式、建議拆分 Task、提供估點建議、摘要 Daily | 沒有人確認就 commit、push，或自動跑完整個流程 |
 | | 核准或合併 PR、關閉 issue |
 | | 接收機密資料或個資 |
 
