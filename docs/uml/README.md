@@ -1,8 +1,8 @@
 # UML 詳細圖
 
-收錄二手書交易平台的七張 UML 完整版，版本為 **v1.1（2026-11-10）**。圖中的名稱、狀態及規則已統一；目前為設計草案，待團隊審查。
+收錄二手書交易平台的八張 UML 完整版。01–07 的版本為 **v1.1（2026-11-10）**，08 取消訂單循序圖於 2026-11-11 新增。圖中的名稱、狀態及規則已統一；目前為設計草案，待團隊審查。
 
-本目錄依 UML 圖的類型分類：`structural/` 放結構圖，`behavioral/` 放行為圖；循序圖屬於行為圖中的互動圖，再依下單與爭議情境分開。每張圖的三種格式放在同一個資料夾。
+本目錄依 UML 圖的類型分類：`structural/` 放結構圖，`behavioral/` 放行為圖；循序圖屬於行為圖中的互動圖，再依下單、取消與爭議情境分開。每張圖的三種格式放在同一個資料夾。
 
 ## 圖表索引
 
@@ -13,6 +13,7 @@
 | 核心類別圖 | 結構圖 | 核心資料、關聯與多重性 | [開啟](structural/class/03-核心類別圖.svg) | [開啟](structural/class/03-核心類別圖.png) | [PlantUML](structural/class/03-核心類別圖.puml) |
 | 訂單狀態圖 | 行為圖 | 訂單轉換與刊登、物流連動 | [開啟](behavioral/state-machine/04-訂單狀態圖.svg) | [開啟](behavioral/state-machine/04-訂單狀態圖.png) | [PlantUML](behavioral/state-machine/04-訂單狀態圖.puml) |
 | 下單循序圖 | 行為圖／互動圖 | 下單驗證與避免重複下單 | [開啟](behavioral/sequence/order/05-下單循序圖.svg) | [開啟](behavioral/sequence/order/05-下單循序圖.png) | [PlantUML](behavioral/sequence/order/05-下單循序圖.puml) |
+| 取消訂單循序圖 | 行為圖／互動圖 | 待出貨時買家或賣家取消與後到操作失敗 | [開啟](behavioral/sequence/cancel/08-取消訂單循序圖.svg) | [開啟](behavioral/sequence/cancel/08-取消訂單循序圖.png) | [PlantUML](behavioral/sequence/cancel/08-取消訂單循序圖.puml) |
 | 爭議循序圖 | 行為圖／互動圖 | 買家開案、賣家回應與管理員裁決 | [開啟](behavioral/sequence/dispute/06-爭議循序圖.svg) | [開啟](behavioral/sequence/dispute/06-爭議循序圖.png) | [PlantUML](behavioral/sequence/dispute/06-爭議循序圖.puml) |
 | 整體交易活動圖 | 行為圖 | 買家、賣家、系統與管理員四泳道流程 | [開啟](behavioral/activity/07-整體交易活動圖.svg) | [開啟](behavioral/activity/07-整體交易活動圖.png) | [PlantUML](behavioral/activity/07-整體交易活動圖.puml) |
 
@@ -29,6 +30,7 @@ docs/uml/
     ├── state-machine/            # 訂單狀態圖
     ├── sequence/                 # 循序圖
     │   ├── order/                # 下單
+    │   ├── cancel/               # 取消訂單
     │   └── dispute/              # 爭議處理
     └── activity/                 # 整體交易活動圖
 ```
@@ -43,7 +45,7 @@ docs/uml/
 
 ## 匯出環境
 
-現有七張圖在 macOS 上以 PlantUML 1.2026.9 匯出，字型為 `PingFang TC`；版本記錄在各 SVG 開頭的 `<?plantuml 1.2026.9?>`。新增或重新匯出時使用同一版 PlantUML（[v1.2026.9 下載頁](https://github.com/plantuml/plantuml/releases/tag/v1.2026.9)）。
+01–07 在 macOS 上以 PlantUML 1.2026.9 匯出，字型為 `PingFang TC`；08 在 Windows 11 以同一版匯出，字型為 `Microsoft JhengHei`。版本記錄在各 SVG 開頭的 `<?plantuml 1.2026.9?>`。新增或重新匯出時使用同一版 PlantUML（[v1.2026.9 下載頁](https://github.com/plantuml/plantuml/releases/tag/v1.2026.9)）。
 
 - 需要 Java。套件圖、使用案例圖、核心類別圖與訂單狀態圖另需 Graphviz，可用 `java -jar plantuml.jar -testdot` 檢查；循序圖與活動圖不需要。
 - 在 repo 根目錄執行下列指令，SVG、PNG 會以相同檔名輸出到 `.puml` 所在的資料夾：
@@ -59,7 +61,7 @@ java -jar plantuml.jar -charset UTF-8 -tpng docs/uml/behavioral/sequence/order/0
 
 | 匯出系統 | `defaultFontName` |
 |---|---|
-| macOS | `PingFang TC`（現有七張） |
+| macOS | `PingFang TC`（01–07） |
 | Windows | `Microsoft JhengHei`（微軟正黑體） |
 | Linux | `Noto Sans CJK TC` |
 

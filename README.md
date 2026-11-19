@@ -20,4 +20,4 @@ uv run python manage.py runserver
 
 ## UML 設計圖
 
-[UML 詳細圖索引](docs/uml/README.md)收錄七張完整版，依結構圖與行為圖分類，提供 SVG、PNG 與 PlantUML 原始檔。
+[UML 詳細圖索引](docs/uml/README.md)收錄八張完整版，依結構圖與行為圖分類，提供 SVG、PNG 與 PlantUML 原始檔。
