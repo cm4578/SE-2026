@@ -254,7 +254,7 @@ Story 必須符合下列全部條件，才能移到 Done。
 
 ## Sprint 固定節奏
 
-11/8 前完成需求與架構制定。11/12 期中報告後改用新看板 Agile+AI Final，11/19 起每個 Sprint 1 週。
+11/8 前完成需求與架構制定。11/12 期中報告後改用新看板 Agile+AI Final，11/19 完成看板設定，11/27 起每個 Sprint 1 週。
 
 | 日期 | 階段 | 目標 |
 |---|---|---|
@@ -262,9 +262,9 @@ Story 必須符合下列全部條件，才能移到 Done。
 | 11/3–11/5 | Sprint 1 | 細化 Story 並估點，完成使用案例圖、循序圖、訂單狀態圖 |
 | 11/6–11/8 | Sprint 2 | 完成類別圖與架構決策，包含技術棧、模組切分與資料模型 |
 | 11/10–11/11 | Sprint 3 | 見 Sprint 紀錄 [#40](https://github.com/cm4578/SE-2026/issues/40) |
-| 11/19–11/25 | Sprint 4 | Sprint Planning 時決定，寫在 Sprint 紀錄 Issue |
-| 11/26–12/02 | Sprint 5 | Sprint Planning 時決定，寫在 Sprint 紀錄 Issue |
-| 12/03–12/09 | Sprint 6 | Sprint Planning 時決定，寫在 Sprint 紀錄 Issue |
+| 11/27–12/03 | Sprint 4 | Sprint Planning 時決定，寫在 Sprint 紀錄 Issue |
+| 12/04–12/10 | Sprint 5 | Sprint Planning 時決定，寫在 Sprint 紀錄 Issue |
+| 12/11–12/17 | Sprint 6 | Sprint Planning 時決定，寫在 Sprint 紀錄 Issue |
 
 ### 會議紀錄
 
