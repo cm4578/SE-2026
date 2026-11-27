@@ -4,8 +4,8 @@
 
 ## 專案
 
-- 台科大軟體工程期中專案，題目是「二手書交易平台」，規格見 `docs/notes/product-spec.md`。
-- 作業要求用 Waterfall + AI 與 Agile + AI 兩種方法做到需求分析，並畫出系統設計的 UML。Agile 的流程見 `docs/agile-ai-workflow.md`。
+- 台科大軟體工程專案（期中與期末），題目是「二手書交易平台」，規格見 `docs/notes/product-spec.md`。
+- 期中作業要求用 Waterfall + AI 與 Agile + AI 兩種方法做到需求分析，並畫出系統設計的 UML；期末要繳交程式碼。Agile 的流程見 `docs/agile-ai-workflow.md`。
 - 成員兩人：`cm4578` 是 Product Owner（PO），`GaoJie0648` 是 Scrum Master 兼 Developer。
 - 看板：[Agile+AI Final](https://github.com/users/cm4578/projects/2)（GitHub Projects）。期中的舊看板已改名為「軟體工程Agile Midterm」並關閉。
 - Wiki：[PO 決定](https://github.com/cm4578/SE-2026/wiki/PO-決定)、[AI 使用紀錄](https://github.com/cm4578/SE-2026/wiki/AI-使用紀錄)。這兩份紀錄不在 repo 的檔案裡，直接在網頁上編輯。

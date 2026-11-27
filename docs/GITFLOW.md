@@ -438,7 +438,7 @@ git push -u origin develop
 | `bugfix/31-修改` | 描述空泛 | `bugfix/31-同一本書重複售出` |
 | `release/期中繳交` | 缺少版本號 | `release/v1.0.0-期中繳交` |
 | 從 `develop` 開出 `hotfix/40-循序圖錯字` | hotfix 必須從 `main` 開出 | 從 `main` 開出 |
-| PR 內文寫 `Closes #12` | 合併後自動關閉 issue，跳過 PO 驗收 | `Refs #12` |
+| PR 內文或 commit message 寫 `Closes #12` | 開到 `develop` 的 PR 會忽略它，也不會建立連結；寫在 commit message 或開到 `main` 的 PR 內文，合併到 `main` 時會自動關閉 issue，跳過 PO 驗收 | `Refs #12`，並在 PR 的 Development 手動連結 issue |
 | `gh pr create` 沒有加 `--base` | PR 會開到預設分支 `main` | 加上 `--base develop` |
 | 用 squash 把 release 合併到 `main` | `main` 與 `develop` 的歷史分岔，之後合併容易衝突 | 用「Create a merge commit」 |
 

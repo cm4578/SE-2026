@@ -231,7 +231,7 @@
 
 - 只能用 `Refs #123`，表示這個 commit 與該 issue 相關。
 - **禁止**在 issue 編號前面寫會自動關閉 issue 的關鍵字，例如 `Closes #123`、`fixes #123`。GitHub 認得的關鍵字有 `close`、`closes`、`closed`、`fix`、`fixes`、`fixed`、`resolve`、`resolves`、`resolved`，大小寫都算。這條規則只限制 issue 參照，type `fix` 照常使用。
-  - 原因：本專案的 issue 必須由 PO 對照驗收條件驗收後，手動關閉。這些關鍵字會在 commit 進入 `main` 時自動關閉 issue，跳過 PO 驗收。
+  - 原因：本專案的 issue 必須由 PO 對照驗收條件驗收後，把卡片移到 Done，由看板關閉 issue。這些關鍵字會在 commit 進入 `main` 時自動關閉 issue，跳過 PO 驗收。
   - PR 的標題與內文同樣禁止，規則見 `docs/GITFLOW.md`。
 - 有多個 issue 時，每個 issue 各寫一行。
 - 只能引用使用者或任務描述中明確提供的 issue 編號。**禁止猜測或捏造 issue 編號**；不知道就不要寫。
