@@ -18,7 +18,7 @@
 |---|---|
 | `git commit`、撰寫 PR 標題 | `docs/COMMIT_CONVENTION.md` |
 | 建立分支、push、開 PR、合併、打 tag | `docs/GITFLOW.md` |
-| 起草或檢查 User Story、估點、畫 UML、整理 PO 決定、寫會議紀錄 | `docs/agile-ai-workflow.md` |
+| 起草或檢查 User Story、Sprint Planning、畫 UML、整理 PO 決定、寫會議紀錄 | `docs/agile-ai-workflow.md` |
 
 本檔案只是摘要。細節與本檔案不同時，以上表的文件為準。
 
@@ -26,7 +26,7 @@
 
 **AI 可以起草，只有人可以接受，每次使用都要記錄。**
 
-1. **人工關卡不能跳過**：Story 由 PO 接受；估點與 Sprint 由團隊決定；PR 由作者以外的組員核准並合併；issue 由 PO 驗收後移到 Done，看板會自動關閉 issue。
+1. **人工關卡不能跳過**：Story 由 PO 接受；Sprint 範圍由團隊決定（本組不估 Story Points）；PR 由作者以外的組員核准並合併；issue 由 PO 驗收後移到 Done，看板會自動關閉 issue。
 2. **先問再動作**：commit、push、開 PR、打 tag 之前，必須先取得人的同意。禁止合併或核准 PR，禁止 force push。權限表見 `docs/GITFLOW.md` 8.1 節。
 3. **不自行新增需求**：筆記、規格書或 Wiki「PO 決定」沒提到的需求，列成待確認問題，由 PO 決定，禁止直接寫進 Story 或文件。規格書已經排除的功能（例如線上付款、真實物流串接、平台收費）禁止提出。
 4. **保留證據**：被拒絕的 Story 與 issue 不要刪除，它們是報告需要的證據。

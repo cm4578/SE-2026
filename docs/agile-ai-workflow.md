@@ -32,7 +32,7 @@ flowchart TD
     D -- 需求不清 --> B
     D -- AI 自行新增 --> X[關閉並記錄原因]
     D -- 接受 --> E[Backlog：PO 排優先順序]
-    E --> F[全組 Sprint Planning：估點並承諾，移到 Ready]
+    E --> F[全組 Sprint Planning：挑 Story 並承諾，移到 Ready]
     F --> G[In progress：開分支、AI 起草、人修改並 commit]
     G --> H[In review：PR 連結 Issue，組員審查後合併]
     H --> I{PO 對照驗收條件}
@@ -45,7 +45,7 @@ flowchart TD
 ### 三個不能省略的人工關卡
 
 1. PO 接受 Story，才能進入 Backlog。
-2. 團隊自己估點並承諾 Sprint，才能進入 Ready。
+2. 團隊決定這一輪做哪些 Story 並承諾 Sprint，才能進入 Ready。
 3. 組員審查 PR，PO 驗收後才能進入 Done。
 
 ## 角色
@@ -93,7 +93,7 @@ PO 決定與 AI 使用紀錄每天都會增加。放在 repo 要開 PR 才看得
 3. 設定 Project：
    - **Status**：AI Draft → Backlog → Ready → In progress → In review → Done
    - **Priority**：P0、P1、P2
-   - **Story Points**：Number 欄位
+   - **Story Points**：Number 欄位。期末不估點，欄位保留但不填，見「單一 Story 流程」第 5 步
    - **Sprint**：Iteration 欄位，在網頁上建立
    - **標籤**：`ai-drafted`、`ambiguous`、`missing`、`ai-invented`、`sprint-record`
 
@@ -121,17 +121,17 @@ PO 決定與 AI 使用紀錄每天都會增加。放在 repo 要開 PR 才看得
 | 欄位 | 內容 | 誰填、何時填 |
 |---|---|---|
 | Priority | P0、P1、P2 | PO，接受 Story 時 |
-| Story Points | 數字 | 全組，Sprint Planning 時 |
+| Story Points | 期末不使用，欄位保留但不填 | 不估點，改用張數，見「單一 Story 流程」第 5 步 |
 | Sprint | Iteration，每輪 1 週，日期見「Sprint 固定節奏」 | 全組，Sprint Planning 時 |
 
 ### 視圖
 
 | 視圖 | 用途 |
 |---|---|
-| 本期 Sprint | 第一個分頁，平常看這個。篩選 `sprint:@current`，只顯示本期的卡，欄位頂端顯示 Story Points 加總 |
+| 本期 Sprint | 第一個分頁，平常看這個。篩選 `sprint:@current`，只顯示本期的卡，欄位頂端顯示卡片張數 |
 | Backlog | 全部卡片 |
 | Priority board | 依 Priority 分組 |
-| Team items | 表格，可以直接改 Priority 與 Story Points |
+| Team items | 表格，可以直接改 Priority |
 | Roadmap | 時間軸 |
 | My items | 指派給自己的卡 |
 
@@ -212,10 +212,13 @@ Story 格式：
 
 ### 5. Sprint Planning（全組）
 
+本組不估 Story Points，改用張數決定這一輪做多少。課程講義 Chapter 2 Processes 第 115 張投影片指出，Scrum 不強制使用 Story Points。
+
 1. 依 Priority 從 Backlog 挑 Story。
-2. 團隊先估點，再看 AI 的建議，差異大就討論。
-3. 填寫 `Story Points`、`Sprint` 與負責人，移到 Ready。
-4. 開一張 Sprint 紀錄 Issue，寫下目標與承諾的 Story。建立時就要貼 `sprint-record`，否則會被自動加進看板。
+2. 挑之前確認每張大小差不多。太大的先拆，AI 可以建議拆法，拆出來的 Story 依第 4 步由 PO 接受。
+3. 依上一輪移到 Done 的張數，決定這一輪挑幾張。沒有上一輪資料時，由負責開發的人判斷一週做得完的量，寧可少挑。
+4. 填寫 `Sprint` 與負責人，移到 Ready。
+5. 開一張 Sprint 紀錄 Issue，寫下目標與承諾的 Story。建立時就要貼 `sprint-record`，否則會被自動加進看板。
 
 ### 6. 執行（Developer）
 
@@ -296,7 +299,7 @@ Story 必須符合下列全部條件，才能移到 Done。
 
 ### Sprint Review
 
-向全組展示完成的 Story，由 PO 確認成果。未完成的由 PO 決定：Sprint 改成下一輪，或清空 Sprint 放回 Backlog。
+向全組展示完成的 Story，由 PO 確認成果。未完成的由 PO 決定：Sprint 改成下一輪，或清空 Sprint 放回 Backlog。在 Sprint 紀錄 Issue 寫下本輪移到 Done 的張數，作為下一輪 Sprint Planning 的依據。
 
 ### Retrospective
 
@@ -311,7 +314,7 @@ Story 起草與檢查的工具是 Claude Opus 5.5、GPT Astra 6.2／Sol 6.2。�
 | 依筆記起草候選 Story 與驗收條件 | 捏造筆記或規格書沒有的使用者、規則或數字 |
 | 列出遺漏的邊界情況、錯誤流程與非功能需求 | 決定範圍與優先順序，例如 MVP 要做什麼 |
 | 用 INVEST 檢查 Story，標出模糊用詞，拆分過大的 Story | 接受 Story，或判定是否通過驗收 |
-| 起草 UML 或程式、建議拆分 Task、提供估點建議、摘要 Daily | 沒有人確認就 commit、push，或自動跑完整個流程 |
+| 起草 UML 或程式、建議拆分 Task、摘要 Daily | 沒有人確認就 commit、push，或自動跑完整個流程 |
 | | 核准或合併 PR、關閉 issue |
 | | 接收機密資料或個資 |
 
