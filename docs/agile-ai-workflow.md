@@ -1,6 +1,6 @@
 # Agile + AI 工作流程
 
-本文件說明本組如何結合 Agile 與 AI 完成期中專案。
+本文件說明本組如何結合 Agile 與 AI 完成軟體工程專案，期中與期末都適用。
 
 核心原則：**AI 可以起草，只有人可以接受，每次使用都要記錄。**
 
@@ -10,15 +10,15 @@
 |---|---|
 | 題目 | [二手書交易平台](https://claude.ai/artifact/45bP7bdGCfo4SwNeKEkFFC) |
 | Repo | [cm4578/SE-2026](https://github.com/cm4578/SE-2026) |
-| 看板 | [軟體工程Agile](https://github.com/users/cm4578/projects/1) |
+| 看板 | [Agile+AI Final](https://github.com/users/cm4578/projects/2)，設定見「看板設定」。期中的舊看板已改名為「軟體工程Agile Midterm」並關閉，保留為期中證據 |
 | Wiki | [PO 決定](https://github.com/cm4578/SE-2026/wiki/PO-決定)、[AI 使用紀錄](https://github.com/cm4578/SE-2026/wiki/AI-使用紀錄) |
 | 成員 | `cm4578`、`GaoJie0648`，共兩人 |
 | 架構制定完成 | 2026-11-08 |
-| 繳交截止日 | 待確認 |
+| 期末繳交截止日 | 待確認 |
 | 繳交程式碼 | 需要 |
 | 本文件範圍 | 只涵蓋 Agile + AI，不含 Waterfall |
 | BMAD | 不採用，原因見「AI 使用範圍」 |
-| Story 起草與檢查工具 | 待定 |
+| Story 起草與檢查工具 | Claude Opus 5.5、GPT Astra 6.2／Sol 6.2 |
 | Agile 組是否需交 SRS | 不需要 |
 | 技術棧 | Python Django 全端，見 Wiki 的[技術棧決策](https://github.com/cm4578/SE-2026/wiki/技術棧決策) |
 
@@ -26,15 +26,15 @@
 
 ```mermaid
 flowchart TD
-    A[全組：蒐集需求，寫筆記] --> B[Dev + AI：起草 Story，放到 AI Draft]
+    A[全組：蒐集需求，寫筆記] --> B[Dev + AI：起草 Story，自動進 AI Draft]
     B --> C[Dev + AI：用 INVEST 檢查]
     C --> D{PO 審查}
     D -- 需求不清 --> B
     D -- AI 自行新增 --> X[關閉並記錄原因]
-    D -- 接受 --> E[Ready]
-    E --> F[全組：估點並承諾 Sprint]
-    F --> G[In Progress：開分支、AI 起草 UML、人修改並 commit]
-    G --> H[In Review：組員審查 PR 後合併]
+    D -- 接受 --> E[Backlog：PO 排優先順序]
+    E --> F[全組 Sprint Planning：挑 Story 並承諾，移到 Ready]
+    F --> G[In progress：開分支、AI 起草、人修改並 commit]
+    G --> H[In review：PR 連結 Issue，組員審查後合併]
     H --> I{PO 對照驗收條件}
     I -- 不符合 --> G
     I -- 符合 --> J[Done]
@@ -44,8 +44,8 @@ flowchart TD
 
 ### 三個不能省略的人工關卡
 
-1. PO 接受 Story，才能進入 Ready。
-2. 團隊自己估點，並承諾 Sprint。
+1. PO 接受 Story，才能進入 Backlog。
+2. 團隊決定這一輪做哪些 Story 並承諾 Sprint，才能進入 Ready。
 3. 組員審查 PR，PO 驗收後才能進入 Done。
 
 ## 角色
@@ -73,7 +73,7 @@ flowchart TD
 |---|---|---|
 | repo 的 `docs/` | 流程與規範、題目規格書、UML | 開 PR，由另一人審查 |
 | [Wiki](https://github.com/cm4578/SE-2026/wiki) | 「PO 決定」、「AI 使用紀錄」與「技術棧決策」 | 直接在網頁上編輯，不用開 PR |
-| Sprint 紀錄 Issue | 所有會議紀錄 | 留言 |
+| Sprint 紀錄 Issue | 所有會議紀錄 | 留言。建立時貼 `sprint-record`，不放進看板 |
 | 看板 | Story 的進度 | 移動卡片 |
 
 PO 決定與 AI 使用紀錄每天都會增加。放在 repo 要開 PR 才看得到，兩人在不同分支各加一列也會衝突，所以放在 Wiki。Wiki 的每次修改都會留下紀錄，可以在頁面的 History 查到誰在什麼時候改了什麼。
@@ -91,12 +91,61 @@ PO 決定與 AI 使用紀錄每天都會增加。放在 repo 要開 PR 才看得
 1. 把題目規格書匯出到 `docs/notes/product-spec.md`，並在 Wiki 建立「PO 決定」與「AI 使用紀錄」兩頁。
 2. 確認兩人都有 Project 的寫入權限。
 3. 設定 Project：
-   - **Status**：Backlog → AI Draft → Ready → In Progress → In Review → Done
-   - **Story Points**：Number 欄位
+   - **Status**：AI Draft → Backlog → Ready → In progress → In review → Done
+   - **Priority**：P0、P1、P2
+   - **Story Points**：Number 欄位。期末不估點，欄位保留但不填，見「單一 Story 流程」第 5 步
    - **Sprint**：Iteration 欄位，在網頁上建立
-   - **標籤**：`ai-drafted`、`ambiguous`、`missing`、`ai-invented`
+   - **標籤**：`ai-drafted`、`ambiguous`、`missing`、`ai-invented`、`sprint-record`
+
+   以上是期末看板 Agile+AI Final 的設定，視圖與自動化見下一節「看板設定」。期中看板的 Status 是 Backlog → AI Draft → Ready → In Progress → In Review → Done，沒有 Priority 欄位與 `sprint-record` 標籤。
 4. 依 [`GITFLOW.md`](GITFLOW.md) 建立 `develop`，並設定 `main` 與 `develop` 的分支保護，合併 PR 至少要另一人核准。
 5. 確認 Project 與 Repo 助教都能開啟，並定期截圖保留。
+
+## 看板設定
+
+期末使用 [Agile+AI Final](https://github.com/users/cm4578/projects/2)，11/19 設定完成。
+
+### 狀態
+
+| 狀態 | 意思 | 怎麼移進來 |
+|---|---|---|
+| AI Draft | 草稿，等 PO 審查 | 新 Issue 自動加入 |
+| Backlog | PO 已接受，還沒排進 Sprint | PO 接受後手動移 |
+| Ready | 本輪已承諾，還沒開工 | Sprint Planning 填好欄位後手動移 |
+| In progress | 開發中 | 負責人開工時手動移 |
+| In review | PR 審查中 | PR 連結 Issue 時自動移 |
+| Done | PO 驗收完成 | PO 留言接受後手動移，Issue 會自動關閉 |
+
+### 欄位
+
+| 欄位 | 內容 | 誰填、何時填 |
+|---|---|---|
+| Priority | P0、P1、P2 | PO，接受 Story 時 |
+| Story Points | 期末不使用，欄位保留但不填 | 不估點，改用張數，見「單一 Story 流程」第 5 步 |
+| Sprint | Iteration，每輪 1 週，日期見「Sprint 固定節奏」 | 全組，Sprint Planning 時 |
+
+### 視圖
+
+| 視圖 | 用途 |
+|---|---|
+| 本期 Sprint | 第一個分頁，平常看這個。篩選 `sprint:@current`，只顯示本期的卡，欄位頂端顯示卡片張數 |
+| Backlog | 全部卡片 |
+| Priority board | 依 Priority 分組 |
+| Team items | 表格，可以直接改 Priority |
+| Roadmap | 時間軸 |
+| My items | 指派給自己的卡 |
+
+### 自動化
+
+- 新開的 Issue 自動加入看板，狀態設為 AI Draft。條件是 `is:issue is:open -label:sprint-record`，所以貼了 `sprint-record` 的 Issue 不會加入。
+- 看板上的 Issue 新增子 Issue 時，子 Issue 也會自動加入。
+- PR 連結 Issue 時，卡片自動移到 In review。PR 開到 `develop`，GitHub 不會依 PR 內文的 `Refs` 或 `Closes` 建立連結，要在 PR 右側的 Development 手動連結。
+- 卡片移到 Done 時，Issue 自動關閉。
+- 「Item closed」自動化已關閉，所以直接關閉 Issue 不會把卡片移到 Done。結案一律把卡片移到 Done，不要直接關閉 Issue。
+
+### 標籤
+
+`sprint-record` 只貼在 Sprint 紀錄 Issue，讓它不加入看板。不小心加進看板時，補貼標籤，再把卡片從看板移除，Issue 本身不受影響。
 
 ## 單一 Story 流程
 
@@ -108,7 +157,7 @@ PO 決定與 AI 使用紀錄每天都會增加。放在 repo 要開 PR 才看得
 
 ### 2. AI 起草（Developer）
 
-起草工具待定。不論使用哪個工具，prompt 都要包含下列要求：
+起草工具是 Claude Opus 5.5、GPT Astra 6.2／Sol 6.2。不論使用哪個工具，prompt 都要包含下列要求：
 
 ```text
 根據 docs/notes/product-spec.md 與 Wiki「PO 決定」起草 User Story，
@@ -116,7 +165,7 @@ PO 決定與 AI 使用紀錄每天都會增加。放在 repo 要開 PR 才看得
 不要自行補上，改列成待確認問題。
 ```
 
-把輸出建成 Issue，加上 `ai-drafted`，放到 AI Draft 欄，並記錄到 Wiki 的「AI 使用紀錄」。
+把輸出建成 Issue 並加上 `ai-drafted`（Issue 會自動加入看板的 AI Draft 欄），再記錄到 Wiki 的「AI 使用紀錄」。
 
 Story 格式：
 
@@ -138,7 +187,7 @@ Story 格式：
 
 ### 3. 檢查 Story（Developer）
 
-檢查工具待定。不論使用哪個工具，prompt 都要包含下列要求：
+檢查工具是 Claude Opus 5.5、GPT Astra 6.2／Sol 6.2。不論使用哪個工具，prompt 都要包含下列要求：
 
 ```text
 用挑錯的角度檢查 Issue #12，逐項對照 INVEST，
@@ -153,7 +202,7 @@ Story 格式：
 
 | 結果 | 動作 |
 |---|---|
-| 接受 | 留言記錄接受內容與修改，移到 Ready |
+| 接受 | 留言記錄接受內容與修改，移到 Backlog，並填 Priority |
 | 需求不清 | 加上 `ambiguous` 或 `missing`，PO 的決定寫進 Wiki「PO 決定」，修改後再審 |
 | AI 自行新增 | 加上 `ai-invented`，以 "Close as not planned" 關閉並寫明原因 |
 
@@ -163,16 +212,19 @@ Story 格式：
 
 ### 5. Sprint Planning（全組）
 
-1. 依優先順序討論 Ready 欄的 Story。
-2. 團隊先估點，再看 AI 的建議，差異大就討論。
-3. 填寫 `Story Points` 與 `Sprint`。
-4. 開一張 Sprint 紀錄 Issue，寫下目標與承諾的 Story。
+本組不估 Story Points，改用張數決定這一輪做多少。課程講義 Chapter 2 Processes 第 115 張投影片指出，Scrum 不強制使用 Story Points。
+
+1. 依 Priority 從 Backlog 挑 Story。
+2. 挑之前確認每張大小差不多。太大的先拆，AI 可以建議拆法，拆出來的 Story 依第 4 步由 PO 接受。
+3. 依上一輪移到 Done 的張數，決定這一輪挑幾張。沒有上一輪資料時，由負責開發的人判斷一週做得完的量，寧可少挑。
+4. 填寫 `Sprint` 與負責人，移到 Ready。
+5. 開一張 Sprint 紀錄 Issue，寫下目標與承諾的 Story。建立時就要貼 `sprint-record`，否則會被自動加進看板。
 
 ### 6. 執行（Developer）
 
-1. Story 移到 In Progress，並指派負責人。
+1. 負責人把 Story 移到 In progress。
 2. 依 [`GITFLOW.md`](GITFLOW.md) 從 `develop` 開分支，例如 `docs/12-訂單流程循序圖`。
-3. 請 AI 用 Mermaid 或 PlantUML 起草 UML，由人修改。
+3. 請 AI 起草 UML 或程式，由人修改。UML 用 Mermaid 或 PlantUML。
 4. 由人 commit，message 遵守 [`COMMIT_CONVENTION.md`](COMMIT_CONVENTION.md)，issue 編號放在 footer：
 
    ```text
@@ -183,13 +235,13 @@ Story 格式：
 
 ### 7. 審查 PR（另一人）
 
-開 PR 到 `develop`，內文寫 `Refs #12`，Story 移到 In Review。審查者對照 Story 確認後，用「Create a merge commit」合併。
+開 PR 到 `develop`，內文寫 `Refs #12`，另外在 PR 右側的 Development 手動連結 Issue，看板會自動把 Story 移到 In review。`develop` 不是預設分支，GitHub 不會依 PR 內文建立連結，所以一定要手動連結。審查者對照 Story 確認後，用「Create a merge commit」合併。
 
-**PR 與 commit 都不要寫 `Closes #12`。** 合併時 Issue 會自動關閉，等於跳過 PO 驗收。
+**PR 與 commit 都不要寫 `Closes #12`。** PR 開到 `develop` 時，GitHub 會忽略 PR 內文的 `Closes`，不會關閉 Issue，也不會建立連結。真正的風險在 commit message：寫在裡面的 `Closes`，會在 release 合併到 `main` 時一次關閉所有相關 Issue，跳過 PO 驗收。
 
 ### 8. 驗收（PO）
 
-PO 逐條核對驗收條件，並確認符合「完成標準」。全部符合就留言接受，手動關閉 Issue，並移到 Done。不符合就退回 In Progress。
+PO 逐條核對驗收條件，並確認符合「完成標準」。全部符合就留言接受，再把卡片移到 Done，Issue 會自動關閉。不要直接關閉 Issue，直接關不會移動卡片。不符合就退回 In progress。
 
 ## 完成標準（Done Criteria）
 
@@ -198,23 +250,28 @@ Story 必須符合下列全部條件，才能移到 Done。
 - 驗收條件逐條符合，PO 已留言接受。
 - PR 經作者以外的組員審查，並以「Create a merge commit」合併到 `develop`。
 - AI 的使用已記錄到 Wiki 的「AI 使用紀錄」。
-- AI 起草的 UML 已由人修改。
+- AI 起草的 UML 或程式已由人修改。
 - 和 `docs/notes/product-spec.md`「品質要求」有關的 Story，設計或實作符合其中的一致性、安全與個資要求。
+- 實作類 Story：依 `README.md` 的「本機啟動」步驟，在本機跑得起來。
+- 實作類 Story：測試全部通過。
 
 ## Sprint 固定節奏
 
-11/8 前完成需求與架構制定，實作 Sprint 等繳交截止日確認後再排。
+11/8 前完成需求與架構制定。11/12 期中報告後改用新看板 Agile+AI Final，11/19 完成看板設定，11/27 起每個 Sprint 1 週。
 
 | 日期 | 階段 | 目標 |
 |---|---|---|
 | 11/1–11/2 | Sprint 0 | 完成準備工作，起草 Story，由 PO 接受 |
 | 11/3–11/5 | Sprint 1 | 細化 Story 並估點，完成使用案例圖、循序圖、訂單狀態圖 |
 | 11/6–11/8 | Sprint 2 | 完成類別圖與架構決策，包含技術棧、模組切分與資料模型 |
-| 11/9 起 | 實作 Sprint | 依繳交截止日安排 |
+| 11/10–11/11 | Sprint 3 | 見 Sprint 紀錄 [#40](https://github.com/cm4578/SE-2026/issues/40) |
+| 11/27–12/03 | Sprint 4 | Sprint Planning 時決定，寫在 Sprint 紀錄 Issue |
+| 12/04–12/10 | Sprint 5 | Sprint Planning 時決定，寫在 Sprint 紀錄 Issue |
+| 12/11–12/17 | Sprint 6 | Sprint Planning 時決定，寫在 Sprint 紀錄 Issue |
 
 ### 會議紀錄
 
-每個 Sprint 在 Sprint Planning 時開一張 Sprint 紀錄 Issue（見「單一 Story 流程」第 5 步）：
+每個 Sprint 在 Sprint Planning 時開一張 Sprint 紀錄 Issue（見「單一 Story 流程」第 5 步），建立時貼 `sprint-record`，不放進看板：
 
 1. 這個 Sprint 的所有會議，包括 Daily、臨時討論、Sprint Review 與 Retrospective，都在這張 Issue 留言。每則的標題寫日期和會議種類，例如「11/09 Daily」。
 2. 會議中做的決定只寫題號與 Wiki 連結，內容寫在 Wiki 的「PO 決定」。
@@ -242,7 +299,7 @@ Story 必須符合下列全部條件，才能移到 Done。
 
 ### Sprint Review
 
-向全組展示完成的 Story，PO 確認成果，未完成的放回 Backlog。
+向全組展示完成的 Story，由 PO 確認成果。未完成的由 PO 決定：Sprint 改成下一輪，或清空 Sprint 放回 Backlog。在 Sprint 紀錄 Issue 寫下本輪移到 Done 的張數，作為下一輪 Sprint Planning 的依據。
 
 ### Retrospective
 
@@ -250,14 +307,14 @@ Story 必須符合下列全部條件，才能移到 Done。
 
 ## AI 使用範圍
 
-Story 起草與檢查的工具待定。不論使用哪個工具，都依下表區分：
+Story 起草與檢查的工具是 Claude Opus 5.5、GPT Astra 6.2／Sol 6.2。不論使用哪個工具，都依下表區分：
 
 | 可以交給 AI（產出必須由人檢查） | 禁止交給 AI |
 |---|---|
 | 依筆記起草候選 Story 與驗收條件 | 捏造筆記或規格書沒有的使用者、規則或數字 |
 | 列出遺漏的邊界情況、錯誤流程與非功能需求 | 決定範圍與優先順序，例如 MVP 要做什麼 |
 | 用 INVEST 檢查 Story，標出模糊用詞，拆分過大的 Story | 接受 Story，或判定是否通過驗收 |
-| 起草 UML、建議拆分 Task、提供估點建議、摘要 Daily | 沒有人確認就 commit、push，或自動跑完整個流程 |
+| 起草 UML 或程式、建議拆分 Task、摘要 Daily | 沒有人確認就 commit、push，或自動跑完整個流程 |
 | | 核准或合併 PR、關閉 issue |
 | | 接收機密資料或個資 |
 
@@ -285,7 +342,7 @@ Story 起草與檢查的工具待定。不論使用哪個工具，都依下表�
 |---|---|
 | AI in our process 表 | Wiki「AI 使用紀錄」 |
 | 審查發現的問題 | `ambiguous`、`missing`、`ai-invented` 標籤的 Issue；Wiki「PO 決定」 |
-| 看板流程展示 | Project 截圖、Issue、PR 連結 |
+| 看板流程展示 | 期中：[軟體工程Agile Midterm](https://github.com/users/cm4578/projects/1)（已關閉）；期末：[Agile+AI Final](https://github.com/users/cm4578/projects/2)。兩者都用 Project 截圖、Issue、PR 連結 |
 | 花費時間 | Wiki「AI 使用紀錄」的時間欄 |
 | 一頁 AI Usage Log | 從 Wiki「AI 使用紀錄」精選，含一筆 AI 出錯的案例 |
 | 組員分工表 | 角色表與 Issue 負責人 |
