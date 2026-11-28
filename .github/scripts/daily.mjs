@@ -304,7 +304,7 @@ export function buildReport({ items, iteration, today, now, since, sinceLabel, s
   L.push(
     `**Sprint Goal**：` +
       (goal ??
-        (recordRef ? `⚠️ ${recordRef} 的內文還沒有「Sprint Goal：」這一行（流程 B-3）` : '（找不到本期 Sprint 紀錄）')),
+        (recordRef ? `⚠️ ${recordRef} 的內文還沒有「Sprint Goal：」這一行（Sprint Planning 時寫在紀錄 Issue）` : '（找不到本期 Sprint 紀錄）')),
   );
   L.push(
     `**進度**：` +
@@ -331,11 +331,11 @@ export function buildReport({ items, iteration, today, now, since, sinceLabel, s
     );
   }
   if (closedNotDone.length) {
-    notes.push(`Issue 已關閉，但卡片沒移到 Done（見流程「常見狀況」）：${listWith(closedNotDone, (i) => i.status)}`);
+    notes.push(`Issue 已關閉，但卡片沒移到 Done（直接關閉 Issue 不會移動卡片）：${listWith(closedNotDone, (i) => i.status)}`);
   }
   if (branchNotStarted.length) {
     notes.push(
-      `分支有新 commit，但卡片還沒移到 In progress（流程 C-1）：` +
+      `分支有新 commit，但卡片還沒移到 In progress（開工時要把卡片移到 In progress）：` +
         branchNotStarted
           .map((c) => `${c.branch} → ${label(byNumber.get(c.issue))}（${byNumber.get(c.issue).status ?? '沒有狀態'}）`)
           .join('、'),
@@ -499,7 +499,7 @@ export async function main(env = process.env, now = new Date()) {
   if (!record) {
     const msg =
       `找不到標題含「${iteration.title}」、貼了 sprint-record 的 open Issue。` +
-      '請 SM 先開本期 Sprint 紀錄 Issue（流程 B-1）。';
+      '請 SM 先開本期 Sprint 紀錄 Issue。';
     if (dryRun) {
       annotate('warning', msg);
     } else if (dayNo === 1) {
