@@ -1,0 +1,44 @@
+name: Daily 紀錄
+
+on:
+  schedule:
+    # GitHub 的排程用 UTC：01:17 UTC = 台北 09:17。避開整點，整點比較容易延遲。
+    # 每天都會跑，但只有 DAILY_DAYS 指定的 Sprint 天數會貼 Daily，其他天幾秒就結束。
+    - cron: '17 1 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: '只預覽，不貼留言（結果看這次執行的 Summary）'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read        # 讀分支、比對 commit
+  issues: write         # 在 Sprint 紀錄 Issue 貼留言
+  pull-requests: read   # 讀開著的、合併的 PR
+
+concurrency:
+  group: daily-record
+  cancel-in-progress: false
+
+jobs:
+  daily:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          sparse-checkout: .github/scripts
+
+      - name: 整理看板並貼到 Sprint 紀錄
+        run: node .github/scripts/daily.mjs
+        env:
+          PROJECT_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PROJECT_OWNER: cm4578
+          PROJECT_NUMBER: '2'
+          DEV_BRANCH: develop
+          STALE_DAYS: '2'
+          # Sprint 第幾天貼 Daily（第 1 天是 Planning、第 7 天是 Review）。留空 = 每天。手動執行不受限制。
+          DAILY_DAYS: '2,4,6'
+          DRY_RUN: ${{ inputs.dry_run || 'false' }}
